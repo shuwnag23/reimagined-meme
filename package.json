@@ -1,0 +1,14 @@
+{
+  "name": "pickup-station",
+  "version": "1.0.0",
+  "description": "多人共享的卡密取件站和配置中心",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js",
+    "test": "node --test"
+  }
+}

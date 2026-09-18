@@ -1,0 +1,2278 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>配置中心</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #65727c;
+      --line: #dbe3e6;
+      --paper: #f4f7f5;
+      --panel: #ffffff;
+      --teal: #087f78;
+      --teal-dark: #05635e;
+      --teal-soft: #e2f2ef;
+      --coral: #e86f51;
+      --coral-soft: #fff0eb;
+      --shadow: 0 22px 60px rgba(29, 51, 56, 0.11);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      min-width: 320px;
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(8, 127, 120, 0.06) 0 1px, transparent 1px 28px),
+        var(--paper);
+      background-size: 28px 28px;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .site-shell { width: min(1440px, calc(100% - 48px)); margin: 0 auto; }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 78px;
+      border-bottom: 1px solid rgba(117, 143, 145, 0.28);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 800;
+    }
+    .brand-mark {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 10px;
+      font-size: 20px;
+      box-shadow: 5px 5px 0 var(--coral);
+    }
+    .brand-name { font-size: 17px; }
+    .mode-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      color: var(--teal-dark);
+      background: var(--teal-soft);
+      border: 1px solid rgba(8, 127, 120, 0.14);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .mode-badge::before {
+      width: 7px;
+      height: 7px;
+      content: "";
+      background: #28a66d;
+      border-radius: 50%;
+    }
+    main { padding: 70px 0 100px; }
+    .config-intro {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 14px;
+      color: var(--coral);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+    }
+    h1 { margin: 0; font-size: clamp(34px, 5vw, 52px); line-height: 1.08; }
+    .config-intro p {
+      max-width: 520px;
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .config-note {
+      max-width: 250px;
+      padding: 13px 15px;
+      color: var(--teal-dark);
+      background: var(--teal-soft);
+      border-left: 3px solid var(--teal);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+    .admin-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.85fr) minmax(360px, 1.15fr);
+      gap: 18px;
+    }
+    .admin-stack { display: grid; gap: 18px; }
+    .admin-panel {
+      padding: 24px;
+      background: var(--panel);
+      border: 1px solid rgba(104, 128, 132, 0.18);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+    .admin-panel h2 { margin: 0 0 5px; font-size: 20px; }
+    .panel-caption {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .field input, .field textarea, .field select {
+      width: 100%;
+      min-height: 44px;
+      padding: 0 12px;
+      color: var(--ink);
+      background: #fbfcfc;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      outline: none;
+    }
+    .field textarea {
+      min-height: 116px;
+      padding-top: 11px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(8, 127, 120, 0.1);
+    }
+    .field input[type="file"] { height: auto; padding: 9px; font-size: 12px; }
+    .field-help {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+    .code-generator {
+      display: flex;
+      align-items: flex-end;
+      gap: 9px;
+      margin-top: 9px;
+    }
+    .code-generator .field {
+      flex: 0 0 120px;
+      margin: 0;
+    }
+    .code-generator .field label {
+      margin-bottom: 6px;
+    }
+    .code-generator .field input {
+      height: 40px;
+      min-height: 40px;
+    }
+    .generator-button {
+      min-height: 40px;
+      padding: 0 12px;
+      color: var(--teal-dark);
+      background: var(--teal-soft);
+      border: 1px solid rgba(8, 127, 120, 0.18);
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .generator-button:hover { background: #d2ebe6; }
+    .admin-file-preview { display: grid; gap: 6px; margin-top: 9px; }
+    .admin-file-chip {
+      padding: 8px 10px;
+      color: var(--teal-dark);
+      background: var(--teal-soft);
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .admin-actions { display: flex; gap: 9px; margin-top: 20px; }
+    .primary-button, .secondary-button, .danger-button, .card-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .primary-button {
+      min-height: 44px;
+      padding: 0 16px;
+      color: #fff;
+      background: var(--teal);
+      border: 0;
+    }
+    .primary-button:hover { background: var(--teal-dark); }
+    .secondary-button {
+      min-height: 44px;
+      padding: 0 13px;
+      color: var(--teal-dark);
+      background: var(--teal-soft);
+      border: 1px solid rgba(8, 127, 120, 0.18);
+    }
+    .danger-button { min-height: 38px; padding: 0 11px; color: #b34f38; background: var(--coral-soft); border: 1px solid rgba(232, 111, 81, 0.2); white-space: nowrap; }
+    .hidden { display: none !important; }
+    .admin-message { min-height: 18px; margin-top: 12px; color: var(--teal-dark); font-size: 12px; font-weight: 700; }
+    .admin-message.error { color: #b34f38; }
+    .product-list-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 15px; }
+    .product-count {
+      min-width: 25px;
+      padding: 4px 7px;
+      color: var(--teal-dark);
+      background: var(--teal-soft);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      text-align: center;
+    }
+    .admin-product-list { display: grid; gap: 10px; }
+    .admin-product-card { padding: 15px; background: #f8faf9; border: 1px solid #e4ebea; border-radius: 9px; }
+    .admin-product-card header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .admin-product-card h3 { margin: 0; font-size: 15px; }
+    .product-code { display: inline-block; margin-top: 5px; padding: 4px 7px; color: #a64c36; background: var(--coral-soft); border-radius: 5px; font-size: 10px; font-weight: 900; letter-spacing: 0.5px; }
+    .admin-product-meta { margin: 12px 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+    .code-tools { margin-top: 12px; }
+    .code-bulk-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+    .bulk-copy-button { padding: 7px 10px; }
+    .bulk-delete-button { color: #b34f38; border-color: rgba(232, 111, 81, 0.2); }
+    .code-section { margin-top: 10px; }
+    .code-section.hidden { display: none; }
+    .code-section-title { margin: 0 0 6px; color: var(--muted); font-size: 11px; font-weight: 800; }
+    .code-list { display: grid; gap: 6px; }
+    .code-select, .inventory-select { width: 100%; height: 36px; margin-top: 8px; padding: 0 9px; color: var(--ink); background: #fbfcfc; border: 1px solid var(--line); border-radius: 7px; outline: none; font-size: 14px; }
+    .code-select[multiple], .inventory-select[multiple] { height: 112px; padding: 6px 9px; }
+    .code-select:focus, .inventory-select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(8, 127, 120, 0.1); }
+    .searchable-select-input { width: 100%; height: 36px; margin-top: 8px; padding: 0 9px; color: var(--ink); background: #fbfcfc; border: 1px solid var(--line); border-radius: 7px; outline: none; font-size: 11px; }
+    .searchable-select-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(8, 127, 120, 0.1); }
+    .selection-detail { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding: 8px 10px; background: #fff; border: 1px solid #e4ebea; border-radius: 7px; }
+    .selection-detail .code-value, .selection-detail .inventory-name { flex: 1; }
+    .selection-summary { flex: 1; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .delete-used-button { flex: 0 0 auto; padding: 6px 9px; color: #b34f38; background: var(--coral-soft); border: 1px solid rgba(232, 111, 81, 0.2); border-radius: 6px; font-size: 11px; font-weight: 800; }
+    .archive-panel { margin-top: 18px; }
+    .archive-toolbar { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+    .archive-search { flex: 1; height: 38px; padding: 0 10px; color: var(--ink); background: #fbfcfc; border: 1px solid var(--line); border-radius: 7px; outline: none; font-size: 12px; }
+    .archive-search:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(8, 127, 120, 0.1); }
+    .archive-select { width: 100%; height: 40px; padding: 0 10px; color: var(--ink); background: #fbfcfc; border: 1px solid var(--line); border-radius: 7px; outline: none; font-size: 12px; }
+    .archive-select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(8, 127, 120, 0.1); }
+    .archive-detail { display: flex; align-items: center; gap: 9px; margin-top: 10px; padding: 10px; background: #f8faf9; border: 1px solid #e4ebea; border-radius: 8px; }
+    .archive-detail-copy { min-width: 0; flex: 1; }
+    .archive-detail-title { overflow: hidden; margin: 0; font-size: 12px; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
+    .archive-detail-meta { margin: 4px 0 0; color: var(--muted); font-size: 10px; }
+    .archive-empty { padding: 22px 12px; color: var(--muted); border: 1px dashed #cbd8d8; border-radius: 8px; font-size: 12px; text-align: center; }
+    .inventory-tools { margin-top: 12px; padding-top: 12px; border-top: 1px solid #e4ebea; }
+    .inventory-search { width: 100%; height: 36px; margin: 8px 0 9px; padding: 0 10px; color: var(--ink); background: #fbfcfc; border: 1px solid var(--line); border-radius: 7px; outline: none; font-size: 11px; }
+    .inventory-search:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(8, 127, 120, 0.1); }
+    .inventory-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px; background: #fff; border: 1px solid #e4ebea; border-radius: 7px; }
+    .inventory-name { overflow: hidden; color: var(--ink); font-size: 11px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+    .inventory-claim { flex: 0 0 auto; color: var(--muted); font-family: Consolas, "Courier New", monospace; font-size: 10px; }
+    .inventory-download { flex: 0 0 auto; padding: 6px 9px; color: var(--teal-dark); background: var(--teal-soft); border: 1px solid rgba(8, 127, 120, 0.18); border-radius: 6px; font-size: 11px; font-weight: 800; text-decoration: none; }
+    .code-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      background: #fff;
+      border: 1px solid #e4ebea;
+      border-radius: 7px;
+    }
+    .code-value {
+      overflow: hidden;
+      color: var(--ink);
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .copy-code-button {
+      flex: 0 0 auto;
+      padding: 6px 9px;
+      color: var(--teal-dark);
+      background: var(--teal-soft);
+      border: 1px solid rgba(8, 127, 120, 0.18);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .bulk-copy-button:disabled { cursor: default; opacity: 0.55; }
+    .card-actions { display: flex; gap: 8px; }
+    .card-action { padding: 7px 10px; color: var(--teal-dark); background: #fff; border: 1px solid rgba(8, 127, 120, 0.2); }
+    .card-action:disabled { cursor: default; opacity: 0.55; }
+    .card-action.delete { color: #b34f38; border-color: rgba(232, 111, 81, 0.2); }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(23, 33, 43, 0.42);
+    }
+    .code-modal {
+      width: min(720px, 100%);
+      max-height: min(760px, calc(100vh - 40px));
+      overflow: auto;
+      padding: 22px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+    .code-modal-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .code-modal-head h2 { margin: 0; font-size: 20px; }
+    .code-modal-head p { margin: 6px 0 0; color: var(--muted); font-size: 12px; }
+    .modal-close-button {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      flex: 0 0 auto;
+      place-items: center;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      font-size: 24px;
+      line-height: 1;
+    }
+    .code-modal-tools { display: grid; gap: 10px; }
+    .code-modal-tools input {
+      width: 100%;
+      height: 38px;
+      padding: 0 10px;
+      color: var(--ink);
+      background: #fbfcfc;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      outline: none;
+      font-size: 12px;
+    }
+    .code-modal-tools input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(8, 127, 120, 0.1); }
+    .code-modal-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .code-modal-select {
+      height: min(360px, 42vh) !important;
+      margin-top: 12px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    .confirm-modal {
+      width: min(460px, 100%);
+      padding: 24px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+    .confirm-modal h2 { margin: 0; font-size: 19px; }
+    .confirm-modal p { margin: 12px 0 22px; color: var(--ink); font-size: 13px; line-height: 1.7; }
+    .confirm-modal-actions { display: flex; justify-content: flex-end; gap: 9px; }
+    .confirm-modal-actions button { min-height: 38px; padding: 0 14px; border-radius: 7px; font-size: 12px; font-weight: 800; }
+    .confirm-cancel-button { color: var(--ink); background: #fff; border: 1px solid var(--line); }
+    .confirm-submit-button { color: #fff; background: var(--ink); border: 1px solid var(--ink); }
+    .confirm-submit-button:hover { background: #2b3945; }
+    .modal-overlay.hidden { display: none !important; }
+    .empty-state { padding: 30px 18px; color: var(--muted); border: 1px dashed #cbd8d8; border-radius: 9px; font-size: 13px; text-align: center; }
+    .footer { margin-top: 46px; color: #859196; font-size: 12px; line-height: 1.7; text-align: center; }
+    .footer strong { color: #52636a; }
+    @media (max-width: 620px) {
+      .site-shell { width: min(100% - 28px, 1080px); }
+      .topbar { min-height: 68px; }
+      .brand-mark { width: 34px; height: 34px; font-size: 17px; }
+      .brand-name { font-size: 15px; }
+      .mode-badge { padding: 7px 9px; font-size: 11px; }
+      main { padding: 55px 0 70px; }
+      .config-intro { display: block; }
+      .config-note { max-width: none; margin-top: 18px; }
+      .admin-layout { grid-template-columns: 1fr; }
+      .admin-panel { padding: 19px; }
+      .code-generator { align-items: stretch; flex-direction: column; }
+      .code-generator .field { flex-basis: auto; }
+      .archive-toolbar { align-items: stretch; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="返回取件站">
+        <span class="brand-mark" aria-hidden="true">+</span>
+        <span class="brand-name" id="brandName">取件站配置中心</span>
+      </a>
+      <span class="mode-badge">管理后台</span>
+    </header>
+
+    <main>
+      <div class="config-intro">
+        <div>
+          <span class="eyebrow">Configuration</span>
+          <h1>商品与卡密<br>配置中心</h1>
+          <p>在这里新增商品、设置卡密并选择商品文件。保存后，取件网站会立即使用新的配置。</p>
+        </div>
+        <div class="config-note">这是独立的管理页面。配置和上传文件保存在服务器。</div>
+      </div>
+
+      <div class="admin-layout">
+        <div class="admin-stack">
+          <section class="admin-panel" aria-labelledby="editorTitle">
+            <h2 id="editorTitle">商品池设置</h2>
+            <p class="panel-caption">先保存商品池基本信息，再分别添加卡密和库存。</p>
+            <form id="productForm" novalidate>
+              <div class="field">
+                <label for="adminTitle">商品名称</label>
+                <input id="adminTitle" type="text" placeholder="例如：会员资料包">
+              </div>
+              <div class="admin-actions">
+                <button class="primary-button" type="submit" id="saveProductButton">保存商品池</button>
+                <button class="secondary-button hidden" type="button" id="cancelEditButton">新建商品池</button>
+              </div>
+              <p class="admin-message" id="adminMessage" role="status" aria-live="polite"></p>
+            </form>
+          </section>
+
+          <section class="admin-panel" aria-labelledby="codePoolTitle">
+            <h2 id="codePoolTitle">添加卡密</h2>
+            <form id="codeForm" novalidate>
+              <div class="field">
+                <label for="codeProductSelect">选择商品池</label>
+                <select id="codeProductSelect">
+                  <option value="">请选择商品池</option>
+                </select>
+              </div>
+              <div class="field">
+                <div class="code-generator">
+                  <div class="field">
+                    <label for="codeQuantity">生成数量</label>
+                    <input id="codeQuantity" type="number" min="1" max="1000" step="1" value="10">
+                  </div>
+                  <button class="generator-button" type="button" id="generateCodesButton">⟳ 生成并添加卡密</button>
+                </div>
+                <p class="field-help">选择商品池后生成，卡密会直接追加到该商品池。</p>
+              </div>
+            </form>
+          </section>
+
+          <section class="admin-panel" aria-labelledby="inventoryPoolTitle">
+            <h2 id="inventoryPoolTitle">添加库存</h2>
+            <form id="inventoryForm" novalidate>
+              <div class="field">
+                <label for="inventoryProductSelect">选择商品池</label>
+                <select id="inventoryProductSelect">
+                  <option value="">请选择商品池</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="adminFiles">新增库存文件</label>
+                <input id="adminFiles" type="file" multiple>
+                <p class="field-help">每个文件视为一件库存，保存后追加到原库存末尾，按添加顺序分配。</p>
+                <div class="admin-file-preview" id="adminFilePreview"></div>
+              </div>
+              <button class="primary-button" type="submit">追加到库存池</button>
+            </form>
+          </section>
+        </div>
+
+        <section class="admin-panel" aria-labelledby="productListTitle">
+          <div class="product-list-head">
+            <div>
+              <h2 id="productListTitle">已配置商品</h2>
+              <p class="panel-caption">当前浏览器中可用的卡密商品</p>
+            </div>
+            <span class="product-count" id="productCount">0</span>
+          </div>
+          <div class="admin-product-list" id="adminProductList"></div>
+        </section>
+      </div>
+
+      <section class="admin-panel archive-panel" aria-labelledby="archiveTitle">
+        <div class="product-list-head">
+          <div>
+            <h2 id="archiveTitle">已使用记录</h2>
+            <p class="panel-caption">卡密兑换成功后会自动移入这里，并保留卡密与发货文件的对应关系。</p>
+          </div>
+          <div class="code-bulk-actions">
+            <span class="product-count" id="archiveCount">0</span>
+            <button class="card-action" type="button" id="openArchiveModal" disabled>查看已使用记录</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="modal-overlay hidden" id="codeModal" role="dialog" aria-modal="true" aria-labelledby="codeModalTitle">
+        <div class="code-modal">
+          <header class="code-modal-head">
+            <div>
+              <h2 id="codeModalTitle">可用卡密</h2>
+              <p id="codeModalMeta"></p>
+            </div>
+            <button class="modal-close-button" type="button" id="closeCodeModal" aria-label="关闭弹窗">×</button>
+          </header>
+          <div class="code-modal-tools">
+            <input id="codeModalSearch" type="search" placeholder="搜索可用卡密" aria-label="搜索可用卡密">
+            <div class="code-modal-actions">
+              <button class="card-action bulk-copy-button" type="button" id="modalCopyAllCodes">批量复制可用卡密</button>
+              <button class="card-action" type="button" id="modalCopySelectedCodes" disabled>复制已选中的卡密</button>
+              <button class="card-action bulk-delete-button" type="button" id="modalDeleteSelectedCodes" disabled>批量删除选中的卡密</button>
+            </div>
+          </div>
+          <select class="code-select code-modal-select" id="codeModalSelect" multiple aria-label="选择可用卡密"></select>
+          <p class="selection-summary" id="codeModalSelection">未选择卡密</p>
+        </div>
+      </div>
+
+      <div class="modal-overlay hidden" id="inventoryModal" role="dialog" aria-modal="true" aria-labelledby="inventoryModalTitle">
+        <div class="code-modal">
+          <header class="code-modal-head">
+            <div>
+              <h2 id="inventoryModalTitle">可用库存</h2>
+              <p id="inventoryModalMeta"></p>
+            </div>
+            <button class="modal-close-button" type="button" id="closeInventoryModal" aria-label="关闭弹窗">×</button>
+          </header>
+          <div class="code-modal-tools">
+            <input id="inventoryModalSearch" type="search" placeholder="搜索可用库存文件" aria-label="搜索可用库存文件">
+            <div class="code-modal-actions">
+              <button class="card-action bulk-copy-button" type="button" id="modalCopyAllInventory">批量复制可用库存</button>
+              <button class="card-action" type="button" id="modalCopySelectedInventory" disabled>复制已选中的库存</button>
+              <button class="card-action" type="button" id="modalDownloadSelectedInventory" disabled>下载已选库存</button>
+              <button class="card-action" type="button" id="modalDownloadSelectedInventoryZip" disabled>批量下载选中文件</button>
+              <button class="card-action bulk-delete-button" type="button" id="modalDeleteSelectedInventory" disabled>批量删除选中的库存</button>
+            </div>
+          </div>
+          <select class="code-select code-modal-select" id="inventoryModalSelect" multiple aria-label="选择可用库存"></select>
+          <p class="selection-summary" id="inventoryModalSelection">未选择库存</p>
+        </div>
+      </div>
+
+      <div class="modal-overlay hidden" id="archiveModal" role="dialog" aria-modal="true" aria-labelledby="archiveModalTitle">
+        <div class="code-modal">
+          <header class="code-modal-head">
+            <div>
+              <h2 id="archiveModalTitle">已使用记录</h2>
+              <p id="archiveModalMeta"></p>
+            </div>
+            <button class="modal-close-button" type="button" id="closeArchiveModal" aria-label="关闭弹窗">×</button>
+          </header>
+          <div class="code-modal-tools">
+            <input id="archiveModalSearch" type="search" placeholder="搜索卡密、文件名或商品名称" aria-label="搜索已使用记录">
+            <div class="code-modal-actions">
+              <button class="card-action bulk-copy-button" type="button" id="modalCopyAllArchives">批量复制已使用卡密</button>
+              <button class="card-action" type="button" id="modalCopySelectedArchives" disabled>复制已选中的卡密</button>
+              <button class="card-action" type="button" id="modalDownloadSelectedArchive" disabled>下载已选文件</button>
+              <button class="card-action" type="button" id="modalDownloadSelectedArchivesZip" disabled>批量下载选中文件</button>
+              <button class="card-action bulk-delete-button" type="button" id="modalDeleteSelectedArchives" disabled>批量删除选中的记录</button>
+            </div>
+          </div>
+          <select class="code-select code-modal-select" id="archiveModalSelect" multiple aria-label="选择已使用记录"></select>
+          <p class="selection-summary" id="archiveModalSelection">未选择记录</p>
+        </div>
+      </div>
+
+      <div class="modal-overlay hidden" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+        <div class="confirm-modal">
+          <h2 id="confirmModalTitle">操作确认</h2>
+          <p id="confirmModalMessage"></p>
+          <div class="confirm-modal-actions">
+            <button class="confirm-cancel-button" type="button" id="confirmModalCancel">取消</button>
+            <button class="confirm-submit-button" type="button" id="confirmModalSubmit">确定</button>
+          </div>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <strong id="footerName">取件站</strong> · <a href="./index.html">返回取件网站</a>
+      </footer>
+    </main>
+  </div>
+
+  <script src="./config.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      var config = window.PICKUP_CONFIG || {};
+      var dbName = "pickup-station-db";
+      var dbVersion = 2;
+      var db = null;
+      var serverMode = window.location.protocol !== "file:";
+      var state = { products: [], archives: [], editingId: null, claims: {}, archiveSelectedId: "" };
+      var productForm = document.getElementById("productForm");
+      var codeForm = document.getElementById("codeForm");
+      var inventoryForm = document.getElementById("inventoryForm");
+      var adminMessage = document.getElementById("adminMessage");
+      var adminFilePreview = document.getElementById("adminFilePreview");
+      var adminProductList = document.getElementById("adminProductList");
+      var activeInventoryUrls = [];
+      var archiveSearch = document.getElementById("archiveModalSearch");
+      var openArchiveModalButton = document.getElementById("openArchiveModal");
+      var activeCodeModalProductId = "";
+      var codeModal = document.getElementById("codeModal");
+      var codeModalTitle = document.getElementById("codeModalTitle");
+      var codeModalMeta = document.getElementById("codeModalMeta");
+      var codeModalSearch = document.getElementById("codeModalSearch");
+      var codeModalSelect = document.getElementById("codeModalSelect");
+      var codeModalSelection = document.getElementById("codeModalSelection");
+      var modalCopyAllCodes = document.getElementById("modalCopyAllCodes");
+      var modalCopySelectedCodes = document.getElementById("modalCopySelectedCodes");
+      var modalDeleteSelectedCodes = document.getElementById("modalDeleteSelectedCodes");
+      var activeInventoryModalProductId = "";
+      var inventoryModal = document.getElementById("inventoryModal");
+      var inventoryModalTitle = document.getElementById("inventoryModalTitle");
+      var inventoryModalMeta = document.getElementById("inventoryModalMeta");
+      var inventoryModalSearch = document.getElementById("inventoryModalSearch");
+      var inventoryModalSelect = document.getElementById("inventoryModalSelect");
+      var inventoryModalSelection = document.getElementById("inventoryModalSelection");
+      var modalCopyAllInventory = document.getElementById("modalCopyAllInventory");
+      var modalCopySelectedInventory = document.getElementById("modalCopySelectedInventory");
+      var modalDownloadSelectedInventory = document.getElementById("modalDownloadSelectedInventory");
+      var modalDownloadSelectedInventoryZip = document.getElementById("modalDownloadSelectedInventoryZip");
+      var modalDeleteSelectedInventory = document.getElementById("modalDeleteSelectedInventory");
+      var activeArchiveModal = false;
+      var archiveModal = document.getElementById("archiveModal");
+      var archiveModalMeta = document.getElementById("archiveModalMeta");
+      var archiveModalSearch = document.getElementById("archiveModalSearch");
+      var archiveModalSelect = document.getElementById("archiveModalSelect");
+      var archiveModalSelection = document.getElementById("archiveModalSelection");
+      var modalCopyAllArchives = document.getElementById("modalCopyAllArchives");
+      var modalCopySelectedArchives = document.getElementById("modalCopySelectedArchives");
+      var modalDownloadSelectedArchive = document.getElementById("modalDownloadSelectedArchive");
+      var modalDownloadSelectedArchivesZip = document.getElementById("modalDownloadSelectedArchivesZip");
+      var modalDeleteSelectedArchives = document.getElementById("modalDeleteSelectedArchives");
+      var crc32Table = null;
+      var confirmModal = document.getElementById("confirmModal");
+      var confirmModalMessage = document.getElementById("confirmModalMessage");
+      var confirmModalCancel = document.getElementById("confirmModalCancel");
+      var confirmModalSubmit = document.getElementById("confirmModalSubmit");
+
+      function askAdminConfirm(message) {
+        return new Promise(function (resolve) {
+          var settled = false;
+          function finish(result) {
+            if (settled) return;
+            settled = true;
+            confirmModal.classList.add("hidden");
+            confirmModalCancel.removeEventListener("click", cancel);
+            confirmModalSubmit.removeEventListener("click", submit);
+            confirmModal.removeEventListener("click", outside);
+            document.removeEventListener("keydown", escape);
+            resolve(result);
+          }
+          function cancel() { finish(false); }
+          function submit() { finish(true); }
+          function outside(event) {
+            if (event.target === confirmModal) finish(false);
+          }
+          function escape(event) {
+            if (event.key === "Escape") finish(false);
+          }
+          confirmModalMessage.textContent = message;
+          confirmModalCancel.addEventListener("click", cancel);
+          confirmModalSubmit.addEventListener("click", submit);
+          confirmModal.addEventListener("click", outside);
+          document.addEventListener("keydown", escape);
+          confirmModal.classList.remove("hidden");
+          confirmModalSubmit.focus();
+        });
+      }
+
+      async function apiRequest(url, options) {
+        var response = await fetch(url, options || {});
+        var data = {};
+        try { data = await response.json(); } catch (error) {}
+        if (!response.ok) throw new Error(data.message || "服务器请求失败（" + response.status + "）");
+        return data;
+      }
+
+      document.title = (config.siteName || "取件站") + " | 配置中心";
+      document.getElementById("brandName").textContent = (config.siteName || "取件站") + "配置中心";
+      document.getElementById("footerName").textContent = config.siteName || "取件站";
+
+      function uid() {
+        return "product-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
+      }
+
+      function normalized(value) {
+        return String(value || "").trim().replace(/\s+/g, "").toUpperCase();
+      }
+
+      function parseCodes(value) {
+        var seen = {};
+        return String(value || "").split(/[\r\n,，;；]+/).map(normalized).filter(function (code) {
+          if (!code || seen[code]) return false;
+          seen[code] = true;
+          return true;
+        });
+      }
+
+      function loadGeneratedCodeHistory() {
+        var cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+        try {
+          var history = JSON.parse(window.localStorage.getItem("pickup-code-history") || "[]");
+          return history.filter(function (entry) {
+            return entry && entry.code && Number(entry.generatedAt) >= cutoff;
+          });
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function saveGeneratedCodeHistory(history) {
+        try {
+          window.localStorage.setItem("pickup-code-history", JSON.stringify(history));
+        } catch (error) {
+          setAdminMessage("生成记录保存失败，请检查浏览器存储权限。", true);
+        }
+      }
+
+      function randomCode() {
+        var alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        var value = "";
+        var randomValues = new Uint32Array(8);
+        if (window.crypto && window.crypto.getRandomValues) {
+          window.crypto.getRandomValues(randomValues);
+          for (var i = 0; i < randomValues.length; i += 1) {
+            value += alphabet[randomValues[i] % alphabet.length];
+          }
+        } else {
+          for (var j = 0; j < 8; j += 1) {
+            value += alphabet[Math.floor(Math.random() * alphabet.length)];
+          }
+        }
+        return "CARD-" + value.slice(0, 4) + "-" + value.slice(4);
+      }
+
+      function generateCodes(count) {
+        var used = {};
+        state.products.forEach(function (product) {
+          product.codes.forEach(function (code) { used[code] = true; });
+        });
+        var history = loadGeneratedCodeHistory();
+        history.forEach(function (entry) { used[normalized(entry.code)] = true; });
+
+        var generated = [];
+        var attempts = 0;
+        var maxAttempts = Math.max(count * 50, 100);
+        while (generated.length < count && attempts < maxAttempts) {
+          attempts += 1;
+          var code = randomCode();
+          if (used[code]) continue;
+          used[code] = true;
+          generated.push(code);
+        }
+        if (generated.length !== count) {
+          throw new Error("生成失败，请减少数量后重试。");
+        }
+
+        var now = Date.now();
+        saveGeneratedCodeHistory(history.concat(generated.map(function (code) {
+          return { code: code, generatedAt: now };
+        })));
+        return generated;
+      }
+
+      function loadClaims() {
+        try {
+          return JSON.parse(window.localStorage.getItem("pickup-claims") || "{}");
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function saveClaims() {
+        if (serverMode) return;
+        try {
+          window.localStorage.setItem("pickup-claims", JSON.stringify(state.claims));
+        } catch (error) {
+          setAdminMessage("兑换记录保存失败，请检查浏览器存储权限。", true);
+        }
+      }
+
+      function setAdminMessage(text, error) {
+        adminMessage.textContent = text || "";
+        adminMessage.className = error ? "admin-message error" : "admin-message";
+      }
+
+      function formatBytes(bytes) {
+        if (typeof bytes !== "number") return String(bytes || "");
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+        if (bytes < 1024 * 1024 * 1024) return (bytes / 1024 / 1024).toFixed(1) + " MB";
+        return (bytes / 1024 / 1024 / 1024).toFixed(1) + " GB";
+      }
+
+      function normalizeProduct(product) {
+        var legacyFiles = Array.isArray(product.files) ? product.files : [];
+        var inventory = Array.isArray(product.inventory) ? product.inventory : legacyFiles;
+        var codes = Array.isArray(product.codes) ? product.codes : (product.code ? [product.code] : []);
+        return {
+          id: product.id || uid(),
+          codes: codes.map(normalized).filter(Boolean),
+          title: product.title || "未命名商品",
+          subtitle: product.subtitle || "",
+          category: product.category || "商品文件",
+          inventory: inventory.map(function (file) {
+            return {
+              id: file.id || uid(),
+              name: file.name || "商品文件",
+              path: file.path || "",
+              type: file.type || "FILE",
+              size: file.size || "",
+              blob: file.blob
+            };
+          })
+        };
+      }
+
+      function seedProducts() {
+        return (Array.isArray(config.products) ? config.products : []).map(normalizeProduct);
+      }
+
+      function openDatabase() {
+        if (!window.indexedDB) return Promise.reject(new Error("当前浏览器不支持本地存储"));
+        return new Promise(function (resolve, reject) {
+          var request = window.indexedDB.open(dbName, dbVersion);
+          request.onupgradeneeded = function (event) {
+            var database = event.target.result;
+            if (!database.objectStoreNames.contains("products")) {
+              database.createObjectStore("products", { keyPath: "id" });
+            }
+            if (!database.objectStoreNames.contains("archives")) {
+              database.createObjectStore("archives", { keyPath: "id" });
+            }
+          };
+          request.onsuccess = function () { resolve(request.result); };
+          request.onerror = function () { reject(request.error || new Error("本地存储初始化失败")); };
+        });
+      }
+
+      function readProducts() {
+        if (serverMode) {
+          return apiRequest("/api/admin/state").then(function (remote) {
+            state.archives = remote.archives || [];
+            state.claims = remote.claims || {};
+            return remote.products || [];
+          });
+        }
+        return new Promise(function (resolve, reject) {
+          var request = db.transaction("products", "readonly").objectStore("products").getAll();
+          request.onsuccess = function () { resolve(request.result || []); };
+          request.onerror = function () { reject(request.error || new Error("读取商品配置失败")); };
+        });
+      }
+
+      function readArchives() {
+        if (serverMode) {
+          return apiRequest("/api/admin/state").then(function (remote) {
+            state.products = (remote.products || []).map(normalizeProduct);
+            state.claims = remote.claims || {};
+            return remote.archives || [];
+          });
+        }
+        return new Promise(function (resolve, reject) {
+          var request = db.transaction("archives", "readonly").objectStore("archives").getAll();
+          request.onsuccess = function () { resolve(request.result || []); };
+          request.onerror = function () { reject(request.error || new Error("读取已使用记录失败")); };
+        });
+      }
+
+      function writeArchive(archive) {
+        if (serverMode) {
+          return apiRequest("/api/admin/archives", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(archive) });
+        }
+        return new Promise(function (resolve, reject) {
+          var transaction = db.transaction("archives", "readwrite");
+          transaction.objectStore("archives").put(archive);
+          transaction.oncomplete = resolve;
+          transaction.onerror = function () { reject(transaction.error || new Error("保存已使用记录失败")); };
+        });
+      }
+
+      function deleteArchives(ids) {
+        if (serverMode) {
+          return apiRequest("/api/admin/archives", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ids: ids }) });
+        }
+        return new Promise(function (resolve, reject) {
+          var transaction = db.transaction("archives", "readwrite");
+          var store = transaction.objectStore("archives");
+          ids.forEach(function (id) { store.delete(id); });
+          transaction.oncomplete = resolve;
+          transaction.onerror = function () { reject(transaction.error || new Error("删除已使用记录失败")); };
+        });
+      }
+
+      function writeProduct(product) {
+        if (serverMode) {
+          return apiRequest("/api/admin/products/" + encodeURIComponent(product.id), { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(product) });
+        }
+        return new Promise(function (resolve, reject) {
+          var transaction = db.transaction("products", "readwrite");
+          transaction.objectStore("products").put(product);
+          transaction.oncomplete = resolve;
+          transaction.onerror = function () { reject(transaction.error || new Error("保存商品配置失败")); };
+        });
+      }
+
+      function removeProduct(id) {
+        if (serverMode) {
+          return apiRequest("/api/admin/products/" + encodeURIComponent(id), { method: "DELETE" });
+        }
+        return new Promise(function (resolve, reject) {
+          var transaction = db.transaction("products", "readwrite");
+          transaction.objectStore("products").delete(id);
+          transaction.oncomplete = resolve;
+          transaction.onerror = function () { reject(transaction.error || new Error("删除商品配置失败")); };
+        });
+      }
+
+      function renderFilePreview(files) {
+        adminFilePreview.innerHTML = "";
+        (files || []).forEach(function (file) {
+          var chip = document.createElement("div");
+          chip.className = "admin-file-chip";
+          chip.textContent = file.name + (file.size ? " · " + formatBytes(file.size) : "");
+          adminFilePreview.appendChild(chip);
+        });
+      }
+
+      function remainingInventoryCount(product) {
+        return product.inventory.filter(function (item) {
+          return !Object.keys(state.claims).some(function (code) {
+            var claim = state.claims[code];
+            return claim && claim.productId === product.id && claim.inventoryId === item.id;
+          });
+        }).length;
+      }
+
+      function getCodeGroups(product) {
+        return product.codes.reduce(function (groups, code) {
+          groups[state.claims[code] ? "used" : "available"].push(code);
+          return groups;
+        }, { available: [], used: [] });
+      }
+
+      function getInventoryGroups(product) {
+        return product.inventory.reduce(function (groups, inventoryItem) {
+          var claimCode = Object.keys(state.claims).find(function (code) {
+            var claim = state.claims[code];
+            return claim && claim.productId === product.id && claim.inventoryId === inventoryItem.id;
+          });
+          if (claimCode) {
+            groups.used.push({ item: inventoryItem, code: claimCode });
+          } else {
+            groups.available.push({ item: inventoryItem });
+          }
+          return groups;
+        }, { available: [], used: [] });
+      }
+
+      function clearInventoryUrls() {
+        activeInventoryUrls.forEach(function (url) { URL.revokeObjectURL(url); });
+        activeInventoryUrls = [];
+      }
+
+      function getSelectedValues(select) {
+        return Array.from(select.selectedOptions || []).map(function (option) {
+          return option.value;
+        }).filter(Boolean);
+      }
+
+      function appendInventoryDownload(row, item) {
+        var link = document.createElement("a");
+        link.className = "inventory-download";
+        link.textContent = "下载";
+        link.setAttribute("download", item.name || "inventory");
+        link.href = item.blob ? URL.createObjectURL(item.blob) : (item.path || "#");
+        if (item.blob) activeInventoryUrls.push(link.href);
+        row.appendChild(link);
+      }
+
+      function downloadInventoryItem(item, button, resetLabel) {
+        var link = document.createElement("a");
+        link.setAttribute("download", item.name || "inventory");
+        link.href = item.blob ? URL.createObjectURL(item.blob) : (item.path || "#");
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        button.textContent = "已开始下载";
+        window.setTimeout(function () { button.textContent = resetLabel || "下载已选库存"; }, 1200);
+        if (item.blob) window.setTimeout(function () { URL.revokeObjectURL(link.href); }, 1000);
+      }
+
+      function getCrc32Table() {
+        if (crc32Table) return crc32Table;
+        crc32Table = [];
+        for (var i = 0; i < 256; i += 1) {
+          var value = i;
+          for (var bit = 0; bit < 8; bit += 1) {
+            value = value & 1 ? 0xedb88320 ^ (value >>> 1) : value >>> 1;
+          }
+          crc32Table[i] = value >>> 0;
+        }
+        return crc32Table;
+      }
+
+      function crc32(bytes) {
+        var table = getCrc32Table();
+        var value = 0xffffffff;
+        for (var i = 0; i < bytes.length; i += 1) {
+          value = table[(value ^ bytes[i]) & 0xff] ^ (value >>> 8);
+        }
+        return (value ^ 0xffffffff) >>> 0;
+      }
+
+      function safeZipName(value, fallback) {
+        var name = String(value || "").replace(/[\\/:*?"<>|]+/g, "_").trim();
+        return name || fallback;
+      }
+
+      async function readInventoryBytes(file) {
+        if (file.blob && typeof file.blob.arrayBuffer === "function") {
+          return new Uint8Array(await file.blob.arrayBuffer());
+        }
+        if (!file.path) throw new Error("文件没有可读取内容。");
+        if (window.location.protocol === "file:") {
+          throw new Error("直接打开本地网页时无法读取服务器文件，请通过网站地址打开配置中心。");
+        }
+        var response = await fetch(file.path);
+        if (!response.ok) throw new Error("读取文件失败：" + (file.name || "商品文件"));
+        return new Uint8Array(await response.arrayBuffer());
+      }
+
+      async function createInventoryZipBlob(fileEntries) {
+        var encoder = new TextEncoder();
+        var entries = [];
+        var localSize = 0;
+
+        for (var i = 0; i < fileEntries.length; i += 1) {
+          var fileEntry = fileEntries[i];
+          var data = await readInventoryBytes(fileEntry.file);
+          var filename = safeZipName(fileEntry.label, "file-" + (i + 1)) + "-" + safeZipName(fileEntry.file.name, "商品文件");
+          var nameBytes = encoder.encode(filename);
+          if (nameBytes.length > 0xffff || data.length > 0xffffffff) {
+            throw new Error("文件过大，无法生成压缩包。");
+          }
+          var entry = { data: data, nameBytes: nameBytes, crc: crc32(data), localOffset: localSize };
+          entries.push(entry);
+          localSize += 30 + nameBytes.length + data.length;
+        }
+
+        var centralSize = entries.reduce(function (total, entry) {
+          return total + 46 + entry.nameBytes.length;
+        }, 0);
+        var totalSize = localSize + centralSize + 22;
+        if (totalSize > 0xffffffff || entries.length > 0xffff) {
+          throw new Error("文件总大小过大，无法生成压缩包。");
+        }
+
+        var output = new Uint8Array(totalSize);
+        var view = new DataView(output.buffer);
+        var offset = 0;
+        entries.forEach(function (entry) {
+          view.setUint32(offset, 0x04034b50, true);
+          view.setUint16(offset + 4, 20, true);
+          view.setUint16(offset + 6, 0x0800, true);
+          view.setUint16(offset + 8, 0, true);
+          view.setUint16(offset + 10, 0, true);
+          view.setUint16(offset + 12, 0, true);
+          view.setUint32(offset + 14, entry.crc, true);
+          view.setUint32(offset + 18, entry.data.length, true);
+          view.setUint32(offset + 22, entry.data.length, true);
+          view.setUint16(offset + 26, entry.nameBytes.length, true);
+          view.setUint16(offset + 28, 0, true);
+          output.set(entry.nameBytes, offset + 30);
+          output.set(entry.data, offset + 30 + entry.nameBytes.length);
+          offset += 30 + entry.nameBytes.length + entry.data.length;
+        });
+
+        var centralOffset = offset;
+        entries.forEach(function (entry) {
+          view.setUint32(offset, 0x02014b50, true);
+          view.setUint16(offset + 4, 20, true);
+          view.setUint16(offset + 6, 20, true);
+          view.setUint16(offset + 8, 0x0800, true);
+          view.setUint16(offset + 10, 0, true);
+          view.setUint16(offset + 12, 0, true);
+          view.setUint16(offset + 14, 0, true);
+          view.setUint32(offset + 16, entry.crc, true);
+          view.setUint32(offset + 20, entry.data.length, true);
+          view.setUint32(offset + 24, entry.data.length, true);
+          view.setUint16(offset + 28, entry.nameBytes.length, true);
+          view.setUint16(offset + 30, 0, true);
+          view.setUint16(offset + 32, 0, true);
+          view.setUint16(offset + 34, 0, true);
+          view.setUint16(offset + 36, 0, true);
+          view.setUint32(offset + 38, 0, true);
+          view.setUint32(offset + 42, entry.localOffset, true);
+          output.set(entry.nameBytes, offset + 46);
+          offset += 46 + entry.nameBytes.length;
+        });
+
+        view.setUint32(offset, 0x06054b50, true);
+        view.setUint16(offset + 4, 0, true);
+        view.setUint16(offset + 6, 0, true);
+        view.setUint16(offset + 8, entries.length, true);
+        view.setUint16(offset + 10, entries.length, true);
+        view.setUint32(offset + 12, centralSize, true);
+        view.setUint32(offset + 16, centralOffset, true);
+        view.setUint16(offset + 20, 0, true);
+        return new Blob([output], { type: "application/zip" });
+      }
+
+      function startZipDownload(blob, filename) {
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      }
+
+      async function downloadSelectedZip(fileEntries, button, filename) {
+        if (!fileEntries.length) return;
+        var originalLabel = button.dataset.downloadDefaultLabel || button.textContent;
+        button.dataset.downloadDefaultLabel = originalLabel;
+        button.disabled = true;
+        button.textContent = "正在打包";
+        try {
+          var blob = await createInventoryZipBlob(fileEntries);
+          startZipDownload(blob, filename);
+          button.textContent = "已开始下载";
+        } catch (error) {
+          button.textContent = originalLabel;
+          setAdminMessage("批量下载失败：" + (error.message || "无法读取文件"), true);
+        }
+        window.setTimeout(function () {
+          button.disabled = false;
+          button.textContent = originalLabel;
+        }, 1200);
+      }
+
+      function updateCodeSelection(select) {
+        var section = select.closest(".code-section");
+        var card = select.closest(".admin-product-card");
+        var detail = section.querySelector(".selection-detail");
+        var codes = getSelectedValues(select);
+        var batchDeleteButton = card.querySelector("[data-action='delete-selected-codes'][data-code-kind='" + select.dataset.codeKind + "']");
+        detail.innerHTML = "";
+        if (batchDeleteButton) batchDeleteButton.disabled = !codes.length;
+        if (!codes.length) return;
+        if (codes.length > 1) {
+          var selectedSummary = document.createElement("span");
+          selectedSummary.className = "selection-summary";
+          selectedSummary.textContent = "已选 " + codes.length + " 张卡密";
+          detail.appendChild(selectedSummary);
+          var copySelectedButton = document.createElement("button");
+          copySelectedButton.className = "copy-code-button";
+          copySelectedButton.type = "button";
+          copySelectedButton.dataset.action = "copy-selected-codes";
+          copySelectedButton.textContent = "复制已选";
+          detail.appendChild(copySelectedButton);
+          return;
+        }
+        var code = codes[0];
+        var codeValue = document.createElement("span");
+        codeValue.className = "code-value";
+        codeValue.textContent = code;
+        detail.appendChild(codeValue);
+        var copyButton = document.createElement("button");
+        copyButton.className = "copy-code-button";
+        copyButton.type = "button";
+        copyButton.dataset.action = "copy-code";
+        copyButton.dataset.code = code;
+        copyButton.textContent = "复制";
+        detail.appendChild(copyButton);
+        if (select.dataset.codeKind === "used") {
+          var deleteButton = document.createElement("button");
+          deleteButton.className = "delete-used-button";
+          deleteButton.type = "button";
+          deleteButton.dataset.action = "archive-used-code";
+          deleteButton.dataset.code = code;
+          deleteButton.textContent = "归档";
+          detail.appendChild(deleteButton);
+        }
+      }
+
+      function currentCodeModalProduct() {
+        return state.products.find(function (product) { return product.id === activeCodeModalProductId; });
+      }
+
+      function updateCodeModalSelection() {
+        var selectedCodes = getSelectedValues(codeModalSelect);
+        modalCopySelectedCodes.disabled = !selectedCodes.length;
+        modalDeleteSelectedCodes.disabled = !selectedCodes.length;
+        codeModalSelection.textContent = selectedCodes.length ? "已选 " + selectedCodes.length + " 张卡密" : "未选择卡密";
+      }
+
+      function filterCodeModalOptions() {
+        var query = normalized(codeModalSearch.value);
+        Array.from(codeModalSelect.options).forEach(function (option) {
+          option.hidden = Boolean(query && normalized(option.dataset.search).indexOf(query) === -1);
+        });
+      }
+
+      function renderCodeModal(product) {
+        var groups = getCodeGroups(product);
+        codeModalTitle.textContent = product.title || "可用卡密";
+        codeModalMeta.textContent = "可用 " + groups.available.length + " 张";
+        modalCopyAllCodes.disabled = !groups.available.length;
+        codeModalSelect.innerHTML = "";
+        groups.available.forEach(function (productCode) {
+          var option = document.createElement("option");
+          option.value = productCode;
+          option.textContent = productCode;
+          option.dataset.search = productCode;
+          codeModalSelect.appendChild(option);
+        });
+        codeModalSelect.size = Math.min(Math.max(groups.available.length, 6), 14);
+        filterCodeModalOptions();
+        updateCodeModalSelection();
+      }
+
+      function refreshCodeModal(productId) {
+        if (codeModal.classList.contains("hidden") || activeCodeModalProductId !== productId) return;
+        var product = currentCodeModalProduct();
+        if (!product || !getCodeGroups(product).available.length) {
+          closeCodeModal();
+          return;
+        }
+        renderCodeModal(product);
+      }
+
+      function openCodeModal(product) {
+        activeCodeModalProductId = product.id;
+        codeModalSearch.value = "";
+        renderCodeModal(product);
+        codeModal.classList.remove("hidden");
+        codeModalSearch.focus();
+      }
+
+      function closeCodeModal() {
+        activeCodeModalProductId = "";
+        codeModal.classList.add("hidden");
+        codeModalSelect.innerHTML = "";
+        codeModalSearch.value = "";
+        updateCodeModalSelection();
+      }
+
+      function currentInventoryModalProduct() {
+        return state.products.find(function (product) { return product.id === activeInventoryModalProductId; });
+      }
+
+      function updateInventoryModalSelection() {
+        var selectedItems = getSelectedValues(inventoryModalSelect);
+        modalCopySelectedInventory.disabled = !selectedItems.length;
+        modalDownloadSelectedInventory.disabled = selectedItems.length !== 1;
+        modalDownloadSelectedInventoryZip.disabled = !selectedItems.length;
+        modalDeleteSelectedInventory.disabled = !selectedItems.length;
+        inventoryModalSelection.textContent = selectedItems.length ? "已选 " + selectedItems.length + " 件库存" : "未选择库存";
+      }
+
+      function filterInventoryModalOptions() {
+        var query = normalized(inventoryModalSearch.value);
+        Array.from(inventoryModalSelect.options).forEach(function (option) {
+          option.hidden = Boolean(query && normalized(option.dataset.search).indexOf(query) === -1);
+        });
+      }
+
+      function renderInventoryModal(product) {
+        var availableInventory = getInventoryGroups(product).available;
+        inventoryModalTitle.textContent = product.title || "可用库存";
+        inventoryModalMeta.textContent = "可用 " + availableInventory.length + " 件";
+        modalCopyAllInventory.disabled = !availableInventory.length;
+        inventoryModalSelect.innerHTML = "";
+        availableInventory.forEach(function (entry) {
+          var option = document.createElement("option");
+          var name = entry.item.name || "库存文件";
+          option.value = entry.item.id;
+          option.textContent = name;
+          option.dataset.search = name;
+          inventoryModalSelect.appendChild(option);
+        });
+        inventoryModalSelect.size = Math.min(Math.max(availableInventory.length, 6), 14);
+        filterInventoryModalOptions();
+        updateInventoryModalSelection();
+      }
+
+      function refreshInventoryModal(productId) {
+        if (inventoryModal.classList.contains("hidden") || activeInventoryModalProductId !== productId) return;
+        var product = currentInventoryModalProduct();
+        if (!product || !getInventoryGroups(product).available.length) {
+          closeInventoryModal();
+          return;
+        }
+        renderInventoryModal(product);
+      }
+
+      function openInventoryModal(product) {
+        activeInventoryModalProductId = product.id;
+        inventoryModalSearch.value = "";
+        renderInventoryModal(product);
+        inventoryModal.classList.remove("hidden");
+        inventoryModalSearch.focus();
+      }
+
+      function closeInventoryModal() {
+        activeInventoryModalProductId = "";
+        inventoryModal.classList.add("hidden");
+        inventoryModalSelect.innerHTML = "";
+        inventoryModalSearch.value = "";
+        updateInventoryModalSelection();
+      }
+
+      function updateInventorySelection(select) {
+        var section = select.closest(".code-section");
+        var card = select.closest(".admin-product-card");
+        var product = state.products.find(function (item) { return item.id === card.dataset.id; });
+        var detail = section.querySelector(".selection-detail");
+        var groups = product && getInventoryGroups(product);
+        var selectedIds = getSelectedValues(select);
+        var batchDeleteButton = card.querySelector("[data-action='delete-selected-inventory'][data-inventory-kind='" + select.dataset.inventoryKind + "']");
+        var entry = groups && selectedIds.length === 1 && groups[select.dataset.inventoryKind].find(function (item) {
+          return item.item.id === selectedIds[0];
+        });
+        detail.innerHTML = "";
+        if (batchDeleteButton) batchDeleteButton.disabled = !selectedIds.length;
+        if (selectedIds.length > 1) {
+          var selectedSummary = document.createElement("span");
+          selectedSummary.className = "selection-summary";
+          selectedSummary.textContent = "已选 " + selectedIds.length + " 个库存";
+          detail.appendChild(selectedSummary);
+          return;
+        }
+        if (!entry) return;
+        var inventoryName = document.createElement("span");
+        inventoryName.className = "inventory-name";
+        inventoryName.textContent = entry.item.name || "库存文件";
+        detail.appendChild(inventoryName);
+        if (entry.code) {
+          var inventoryClaim = document.createElement("span");
+          inventoryClaim.className = "inventory-claim";
+          inventoryClaim.textContent = entry.code;
+          detail.appendChild(inventoryClaim);
+        }
+        appendInventoryDownload(detail, entry.item);
+        if (select.dataset.inventoryKind === "used") {
+          var deleteButton = document.createElement("button");
+          deleteButton.className = "delete-used-button";
+          deleteButton.type = "button";
+          deleteButton.dataset.action = "archive-used-inventory";
+          deleteButton.dataset.inventoryId = entry.item.id;
+          deleteButton.textContent = "归档";
+          detail.appendChild(deleteButton);
+        }
+      }
+
+      function getFilteredArchives() {
+        var query = normalized(archiveSearch.value);
+        return state.archives.filter(function (archive) {
+          var text = [archive.code, archive.productTitle, archive.inventory && archive.inventory.name].join(" ");
+          return !query || normalized(text).indexOf(query) !== -1;
+        });
+      }
+
+      function renderArchives() {
+        var filtered = getFilteredArchives();
+        document.getElementById("archiveCount").textContent = state.archives.length;
+        openArchiveModalButton.disabled = !state.archives.length;
+        if (activeArchiveModal) {
+          if (state.archives.length) renderArchiveModal();
+          else closeArchiveModal();
+        }
+      }
+
+      function updateArchiveModalSelection() {
+        var selectedIds = getSelectedValues(archiveModalSelect);
+        modalCopySelectedArchives.disabled = !selectedIds.length;
+        modalDownloadSelectedArchive.disabled = selectedIds.length !== 1;
+        modalDownloadSelectedArchivesZip.disabled = !selectedIds.length;
+        modalDeleteSelectedArchives.disabled = !selectedIds.length;
+        archiveModalSelection.textContent = selectedIds.length ? "已选 " + selectedIds.length + " 条记录" : "未选择记录";
+      }
+
+      function filterArchiveModalOptions() {
+        var query = normalized(archiveModalSearch.value);
+        Array.from(archiveModalSelect.options).forEach(function (option) {
+          option.hidden = Boolean(query && normalized(option.dataset.search).indexOf(query) === -1);
+        });
+      }
+
+      function renderArchiveModal() {
+        var filtered = getFilteredArchives();
+        archiveModalMeta.textContent = "显示 " + filtered.length + " 条，共 " + state.archives.length + " 条";
+        modalCopyAllArchives.disabled = !filtered.length;
+        archiveModalSelect.innerHTML = "";
+        filtered.forEach(function (archive) {
+          var option = document.createElement("option");
+          var inventoryName = archive.inventory && archive.inventory.name || "库存文件";
+          var productTitle = archive.productTitle || "商品池";
+          option.value = archive.id;
+          option.textContent = archive.code + " · " + inventoryName + " · " + productTitle;
+          option.dataset.search = [archive.code, inventoryName, productTitle].join(" ");
+          archiveModalSelect.appendChild(option);
+        });
+        archiveModalSelect.size = Math.min(Math.max(filtered.length, 6), 14);
+        filterArchiveModalOptions();
+        updateArchiveModalSelection();
+      }
+
+      function openArchiveModal() {
+        activeArchiveModal = true;
+        archiveModalSearch.value = "";
+        renderArchiveModal();
+        archiveModal.classList.remove("hidden");
+        archiveModalSearch.focus();
+      }
+
+      function closeArchiveModal() {
+        activeArchiveModal = false;
+        archiveModal.classList.add("hidden");
+        archiveModalSelect.innerHTML = "";
+        archiveModalSearch.value = "";
+        updateArchiveModalSelection();
+      }
+
+      function renderAdminProducts() {
+        clearInventoryUrls();
+        adminProductList.innerHTML = "";
+        document.getElementById("productCount").textContent = state.products.length;
+        if (!state.products.length) {
+          var empty = document.createElement("div");
+          empty.className = "empty-state";
+          empty.textContent = "还没有商品，先在左侧添加一个。";
+          adminProductList.appendChild(empty);
+          updateProductControls();
+          return;
+        }
+
+        state.products.forEach(function (product) {
+          var codeGroups = getCodeGroups(product);
+          var inventoryGroups = getInventoryGroups(product);
+          var card = document.createElement("article");
+          card.className = "admin-product-card";
+          card.dataset.id = product.id;
+
+          var header = document.createElement("header");
+          var titleWrap = document.createElement("div");
+          var title = document.createElement("h3");
+          title.textContent = product.title || "未命名商品";
+          var code = document.createElement("span");
+          code.className = "product-code";
+          code.textContent = product.codes.length ? product.codes.length + " 张可用" : "未设置卡密";
+          titleWrap.appendChild(title);
+          titleWrap.appendChild(code);
+          header.appendChild(titleWrap);
+          card.appendChild(header);
+
+          var meta = document.createElement("p");
+          meta.className = "admin-product-meta";
+          meta.textContent = product.inventory.length + " 件库存 · 剩余 " + remainingInventoryCount(product) + " 件";
+          card.appendChild(meta);
+
+          var codeTools = document.createElement("div");
+          codeTools.className = "code-tools";
+          var bulkActions = document.createElement("div");
+          bulkActions.className = "code-bulk-actions";
+          var viewButton = document.createElement("button");
+          viewButton.className = "card-action";
+          viewButton.type = "button";
+          viewButton.dataset.action = "open-code-modal";
+          viewButton.textContent = "查看可用卡密";
+          viewButton.disabled = !codeGroups.available.length;
+          bulkActions.appendChild(viewButton);
+          codeTools.appendChild(bulkActions);
+          card.appendChild(codeTools);
+
+          var inventoryTools = document.createElement("div");
+          inventoryTools.className = "inventory-tools";
+          var inventoryActions = document.createElement("div");
+          inventoryActions.className = "code-bulk-actions";
+          var inventoryButton = document.createElement("button");
+          inventoryButton.className = "card-action";
+          inventoryButton.type = "button";
+          inventoryButton.dataset.action = "open-inventory-modal";
+          inventoryButton.textContent = "查看可用库存";
+          inventoryButton.disabled = !inventoryGroups.available.length;
+          inventoryActions.appendChild(inventoryButton);
+          inventoryTools.appendChild(inventoryActions);
+          card.appendChild(inventoryTools);
+
+          var actions = document.createElement("div");
+          actions.className = "card-actions";
+          ["编辑", "删除"].forEach(function (label) {
+            var button = document.createElement("button");
+            button.className = "card-action" + (label === "删除" ? " delete" : "");
+            button.type = "button";
+            button.dataset.action = label === "编辑" ? "edit" : "delete";
+            button.textContent = label;
+            actions.appendChild(button);
+          });
+          card.appendChild(actions);
+          adminProductList.appendChild(card);
+        });
+        updateProductControls();
+      }
+
+      function getSelectedProduct() {
+        return state.products.find(function (product) {
+          return product.id === state.editingId;
+        });
+      }
+
+      function getCodeTargetProduct() {
+        var id = document.getElementById("codeProductSelect").value;
+        return state.products.find(function (product) {
+          return product.id === id;
+        });
+      }
+
+      function getInventoryTargetProduct() {
+        var id = document.getElementById("inventoryProductSelect").value;
+        return state.products.find(function (product) {
+          return product.id === id;
+        });
+      }
+
+      function updateCodeProductOptions() {
+        var select = document.getElementById("codeProductSelect");
+        var currentValue = select.value;
+        select.innerHTML = "";
+        var placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = "请选择商品池";
+        select.appendChild(placeholder);
+        state.products.forEach(function (product) {
+          var codeGroups = getCodeGroups(product);
+          var option = document.createElement("option");
+          option.value = product.id;
+          option.textContent = product.title + " · 可用 " + codeGroups.available.length + " / 已用 " + codeGroups.used.length;
+          select.appendChild(option);
+        });
+        if (state.products.some(function (product) { return product.id === currentValue; })) {
+          select.value = currentValue;
+        }
+      }
+
+      function updateInventoryProductOptions() {
+        var select = document.getElementById("inventoryProductSelect");
+        var currentValue = select.value;
+        select.innerHTML = "";
+        var placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = "请选择商品池";
+        select.appendChild(placeholder);
+        state.products.forEach(function (product) {
+          var option = document.createElement("option");
+          option.value = product.id;
+          option.textContent = product.title + " · " + product.inventory.length + " 件库存";
+          select.appendChild(option);
+        });
+        if (state.products.some(function (product) { return product.id === currentValue; })) {
+          select.value = currentValue;
+        }
+      }
+
+      function updateProductControls() {
+        updateCodeProductOptions();
+        updateInventoryProductOptions();
+      }
+
+      function resetProductForm() {
+        state.editingId = null;
+        productForm.reset();
+        codeForm.reset();
+        inventoryForm.reset();
+        document.getElementById("editorTitle").textContent = "商品池设置";
+        document.getElementById("saveProductButton").textContent = "保存商品池";
+        document.getElementById("cancelEditButton").classList.add("hidden");
+        adminFilePreview.innerHTML = "";
+        updateProductControls();
+      }
+
+      function editProduct(product) {
+        state.editingId = product.id;
+        document.getElementById("adminTitle").value = product.title || "";
+        document.getElementById("adminFiles").value = "";
+        document.getElementById("editorTitle").textContent = "编辑商品池";
+        document.getElementById("saveProductButton").textContent = "保存修改";
+        document.getElementById("cancelEditButton").classList.remove("hidden");
+        adminFilePreview.innerHTML = "当前库存 " + product.inventory.length + " 件，新增文件会追加到末尾。";
+        updateCodeProductOptions();
+        document.getElementById("codeProductSelect").value = product.id;
+        updateInventoryProductOptions();
+        document.getElementById("inventoryProductSelect").value = product.id;
+        updateProductControls();
+        document.getElementById("adminTitle").focus();
+      }
+
+      async function migrateUsedClaimsToArchives() {
+        var changed = false;
+        var archivedCodes = {};
+        state.archives.forEach(function (archive) { archivedCodes[archive.code] = archive; });
+        for (var productIndex = 0; productIndex < state.products.length; productIndex += 1) {
+          var product = state.products[productIndex];
+          var nextCodes = [];
+          var nextInventory = product.inventory.slice();
+          for (var codeIndex = 0; codeIndex < product.codes.length; codeIndex += 1) {
+            var code = product.codes[codeIndex];
+            var claim = state.claims[code];
+            if (!claim) {
+              nextCodes.push(code);
+              continue;
+            }
+            var inventoryItem = nextInventory.find(function (item) { return item.id === claim.inventoryId; });
+            if (!archivedCodes[code]) {
+              inventoryItem = inventoryItem || { id: "missing-" + uid(), name: "库存文件（原记录缺失）", type: "FILE", size: "" };
+              var archive = {
+                id: "archive-" + uid(),
+                productId: product.id,
+                productTitle: product.title,
+                code: code,
+                inventory: inventoryItem,
+                claimedAt: claim.claimedAt || "",
+                archivedAt: new Date().toISOString()
+              };
+              await writeArchive(archive);
+              state.archives.push(archive);
+              archivedCodes[code] = archive;
+            }
+            nextInventory = nextInventory.filter(function (item) { return !claim.inventoryId || item.id !== claim.inventoryId; });
+            changed = true;
+          }
+          if (changed && (nextCodes.length !== product.codes.length || nextInventory.length !== product.inventory.length)) {
+            await writeProduct({
+              id: product.id,
+              title: product.title,
+              codes: nextCodes,
+              category: product.category,
+              subtitle: product.subtitle,
+              inventory: nextInventory
+            });
+            product.codes = nextCodes;
+            product.inventory = nextInventory;
+          }
+        }
+      }
+
+      async function loadProducts() {
+        if (serverMode) {
+          try {
+            var remote = await apiRequest("/api/admin/state");
+            state.products = (remote.products || []).map(normalizeProduct);
+            state.archives = remote.archives || [];
+            state.claims = remote.claims || {};
+          } catch (error) {
+            setAdminMessage(error.message || "无法连接服务端，请检查服务器状态。", true);
+          }
+          renderAdminProducts();
+          renderArchives();
+          return;
+        }
+        state.claims = loadClaims();
+        state.archives = [];
+        try {
+          db = await openDatabase();
+          state.products = (await readProducts()).map(normalizeProduct);
+          state.archives = await readArchives();
+          if (!state.products.length) {
+            state.products = seedProducts();
+            for (var i = 0; i < state.products.length; i += 1) await writeProduct(state.products[i]);
+          }
+          await migrateUsedClaimsToArchives();
+        } catch (error) {
+          state.products = seedProducts();
+          setAdminMessage("浏览器本地存储不可用，当前配置只会在本次打开期间有效。", true);
+        }
+        renderAdminProducts();
+        renderArchives();
+      }
+
+      document.getElementById("adminFiles").addEventListener("change", function () {
+        renderFilePreview(Array.from(this.files));
+      });
+
+      document.getElementById("cancelEditButton").addEventListener("click", resetProductForm);
+
+      document.getElementById("generateCodesButton").addEventListener("click", async function () {
+        var targetProduct = getCodeTargetProduct();
+        if (!targetProduct) {
+          setAdminMessage("请先在下方选择一个商品池，再生成卡密。", true);
+          return;
+        }
+        var quantity = Number(document.getElementById("codeQuantity").value);
+        if (!Number.isInteger(quantity) || quantity < 1 || quantity > 1000) {
+          setAdminMessage("生成数量请输入 1 到 1000 之间的整数。", true);
+          return;
+        }
+        try {
+          if (serverMode) {
+            var remoteGenerated = await apiRequest("/api/admin/generate-codes", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ count: quantity }) });
+            await apiRequest("/api/admin/products/" + encodeURIComponent(targetProduct.id) + "/codes", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ codes: remoteGenerated.codes }) });
+            state.products = (await readProducts()).map(normalizeProduct);
+            renderAdminProducts();
+            document.getElementById("codeProductSelect").value = targetProduct.id;
+            setAdminMessage("已生成并添加 " + remoteGenerated.codes.length + " 张卡密到“" + targetProduct.title + "”。", false);
+            return;
+          }
+          var generated = generateCodes(quantity);
+          await writeProduct({
+            id: targetProduct.id,
+            title: targetProduct.title,
+            codes: targetProduct.codes.concat(generated),
+            category: targetProduct.category,
+            subtitle: targetProduct.subtitle,
+            inventory: targetProduct.inventory
+          });
+          state.products = (await readProducts()).map(normalizeProduct);
+          renderAdminProducts();
+          document.getElementById("codeProductSelect").value = targetProduct.id;
+          setAdminMessage("已生成并添加 " + generated.length + " 张卡密到“" + targetProduct.title + "”。", false);
+        } catch (error) {
+          setAdminMessage(error.message || "生成卡密失败，请重试。", true);
+        }
+      });
+
+      productForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        var title = document.getElementById("adminTitle").value.trim();
+        var current = getSelectedProduct();
+
+        if (!title) {
+          setAdminMessage("请填写商品名称。", true);
+          return;
+        }
+        var product = {
+          id: state.editingId || uid(),
+          title: title,
+          codes: current ? current.codes : [],
+          category: current ? current.category : "商品文件",
+          subtitle: current ? current.subtitle : "文件已准备好，可以开始下载。",
+          inventory: current ? current.inventory : []
+        };
+
+        try {
+          if (!db && !serverMode) throw new Error("当前浏览器无法保存配置");
+          if (serverMode) {
+            await apiRequest("/api/admin/products/" + encodeURIComponent(product.id), { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: product.title, subtitle: product.subtitle, category: product.category }) });
+          } else {
+            await writeProduct(product);
+          }
+          state.products = (await readProducts()).map(normalizeProduct);
+          state.editingId = product.id;
+          renderAdminProducts();
+          document.getElementById("codeProductSelect").value = product.id;
+          document.getElementById("inventoryProductSelect").value = product.id;
+          document.getElementById("editorTitle").textContent = "编辑商品池";
+          document.getElementById("saveProductButton").textContent = "保存修改";
+          document.getElementById("cancelEditButton").classList.remove("hidden");
+          setAdminMessage("商品池信息已保存，现在可以分别添加卡密和库存。", false);
+        } catch (error) {
+          setAdminMessage(error.message || "保存失败，请重试。", true);
+        }
+      });
+
+      codeForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        document.getElementById("generateCodesButton").click();
+      });
+
+      inventoryForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        var product = getInventoryTargetProduct();
+        var selectedFiles = Array.from(document.getElementById("adminFiles").files || []);
+        if (!product) {
+          setAdminMessage("请先保存或选择一个商品池。", true);
+          return;
+        }
+        if (!selectedFiles.length) {
+          setAdminMessage("请选择至少一件库存文件。", true);
+          return;
+        }
+        var newInventory = selectedFiles.map(function (file) {
+          return {
+            id: uid(),
+            name: file.name,
+            type: (file.name.split(".").pop() || "FILE").slice(0, 6).toUpperCase(),
+            size: file.size,
+            blob: file
+          };
+        });
+        try {
+          if (serverMode) {
+            var uploadData = new FormData();
+            selectedFiles.forEach(function (file) { uploadData.append("files", file, file.name); });
+            await apiRequest("/api/admin/products/" + encodeURIComponent(product.id) + "/inventory", { method: "POST", body: uploadData });
+          } else {
+            await writeProduct({
+              id: product.id,
+              title: product.title,
+              codes: product.codes,
+              category: product.category,
+              subtitle: product.subtitle,
+              inventory: product.inventory.concat(newInventory)
+            });
+          }
+          state.products = (await readProducts()).map(normalizeProduct);
+          inventoryForm.reset();
+          renderFilePreview([]);
+          renderAdminProducts();
+          setAdminMessage("已追加 " + newInventory.length + " 件库存。", false);
+        } catch (error) {
+          setAdminMessage(error.message || "追加库存失败，请重试。", true);
+        }
+      });
+
+      async function copyText(text, button, successLabel) {
+        var originalLabel = button.dataset.copyDefaultLabel || button.textContent;
+        button.dataset.copyDefaultLabel = originalLabel;
+        if (button.copyResetTimer) window.clearTimeout(button.copyResetTimer);
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(text);
+          } else {
+            throw new Error("clipboard unavailable");
+          }
+        } catch (error) {
+          var helper = document.createElement("textarea");
+          helper.value = text;
+          helper.style.position = "fixed";
+          helper.style.opacity = "0";
+          document.body.appendChild(helper);
+          helper.select();
+          document.execCommand("copy");
+          helper.remove();
+        }
+        button.textContent = successLabel;
+        button.copyResetTimer = window.setTimeout(function () {
+          button.textContent = originalLabel;
+          delete button.copyResetTimer;
+        }, 1200);
+      }
+
+      async function copyCode(code, button) {
+        await copyText(code, button, "已复制");
+      }
+
+      async function copyCodes(codes, button) {
+        await copyText(codes.join("\n"), button, "已复制全部");
+      }
+
+      async function copyInventoryNames(names, button) {
+        await copyText(names.join("\n"), button, "已复制全部");
+      }
+
+      async function archiveUsedClaim(product, code, inventoryId) {
+        var claim = state.claims[code];
+        if (!claim) return;
+        var assignedInventoryId = inventoryId || claim.inventoryId;
+        var inventoryItem = product.inventory.find(function (item) { return item.id === assignedInventoryId; });
+        if (!inventoryItem) {
+          setAdminMessage("找不到这条兑换记录对应的库存，无法归档。", true);
+          return;
+        }
+        if (state.archives.some(function (archive) { return archive.code === code; })) return;
+        if (!(await askAdminConfirm("归档后会从商品池中移出，但仍可在已使用记录中查找，确定继续吗？"))) return;
+        await writeArchive({
+          id: "archive-" + uid(),
+          productId: product.id,
+          productTitle: product.title,
+          code: code,
+          inventory: inventoryItem,
+          claimedAt: claim.claimedAt || "",
+          archivedAt: new Date().toISOString()
+        });
+        var nextProduct = {
+          id: product.id,
+          title: product.title,
+          codes: product.codes.filter(function (item) { return item !== code; }),
+          category: product.category,
+          subtitle: product.subtitle,
+          inventory: product.inventory.filter(function (item) { return item.id !== assignedInventoryId; })
+        };
+        await writeProduct(nextProduct);
+        state.products = (await readProducts()).map(normalizeProduct);
+        state.archives = await readArchives();
+        renderAdminProducts();
+        renderArchives();
+        setAdminMessage("已归档卡密和对应库存。", false);
+      }
+
+      async function deleteSelectedCodes(product, select) {
+        var codes = getSelectedValues(select);
+        if (!codes.length) return;
+        if (!(await askAdminConfirm("确定删除选中的 " + codes.length + " 张卡密吗？删除后无法恢复。"))) return;
+        if (serverMode) {
+          try {
+            await apiRequest("/api/admin/products/" + encodeURIComponent(product.id) + "/codes", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ codes: codes }) });
+            state.products = (await readProducts()).map(normalizeProduct);
+            state.archives = await readArchives();
+            renderAdminProducts();
+            renderArchives();
+            refreshCodeModal(product.id);
+            setAdminMessage("已删除 " + codes.length + " 张卡密。", false);
+          } catch (error) {
+            setAdminMessage(error.message || "批量删除卡密失败，请重试。", true);
+          }
+          return;
+        }
+        var archiveIds = state.archives.filter(function (archive) {
+          return archive.productId === product.id && codes.indexOf(archive.code) !== -1;
+        }).map(function (archive) { return archive.id; });
+        var nextProduct = {
+          id: product.id,
+          title: product.title,
+          codes: product.codes.filter(function (code) { return codes.indexOf(code) === -1; }),
+          category: product.category,
+          subtitle: product.subtitle,
+          inventory: product.inventory
+        };
+        try {
+          await writeProduct(nextProduct);
+          if (archiveIds.length) await deleteArchives(archiveIds);
+          codes.forEach(function (code) { delete state.claims[code]; });
+          saveClaims();
+          state.products = (await readProducts()).map(normalizeProduct);
+          state.archives = await readArchives();
+          renderAdminProducts();
+          renderArchives();
+          refreshCodeModal(product.id);
+          setAdminMessage("已删除 " + codes.length + " 张卡密。", false);
+        } catch (error) {
+          setAdminMessage(error.message || "批量删除卡密失败，请重试。", true);
+        }
+      }
+
+      async function deleteSelectedInventory(product, select) {
+        var inventoryIds = getSelectedValues(select);
+        if (!inventoryIds.length) return;
+        if (!(await askAdminConfirm("确定删除选中的 " + inventoryIds.length + " 件库存吗？删除后无法恢复。"))) return;
+        if (serverMode) {
+          try {
+            await apiRequest("/api/admin/products/" + encodeURIComponent(product.id) + "/inventory", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ids: inventoryIds }) });
+            state.products = (await readProducts()).map(normalizeProduct);
+            state.archives = await readArchives();
+            renderAdminProducts();
+            renderArchives();
+            refreshInventoryModal(product.id);
+            setAdminMessage("已删除 " + inventoryIds.length + " 件库存。", false);
+          } catch (error) {
+            setAdminMessage(error.message || "批量删除库存失败，请重试。", true);
+          }
+          return;
+        }
+        var archiveIds = state.archives.filter(function (archive) {
+          return archive.productId === product.id && archive.inventory && inventoryIds.indexOf(archive.inventory.id) !== -1;
+        }).map(function (archive) { return archive.id; });
+        var nextProduct = {
+          id: product.id,
+          title: product.title,
+          codes: product.codes,
+          category: product.category,
+          subtitle: product.subtitle,
+          inventory: product.inventory.filter(function (item) { return inventoryIds.indexOf(item.id) === -1; })
+        };
+        try {
+          await writeProduct(nextProduct);
+          if (archiveIds.length) await deleteArchives(archiveIds);
+          Object.keys(state.claims).forEach(function (code) {
+            var claim = state.claims[code];
+            if (claim && claim.productId === product.id && inventoryIds.indexOf(claim.inventoryId) !== -1) {
+              delete state.claims[code];
+            }
+          });
+          saveClaims();
+          state.products = (await readProducts()).map(normalizeProduct);
+          state.archives = await readArchives();
+          renderAdminProducts();
+          renderArchives();
+          refreshInventoryModal(product.id);
+          setAdminMessage("已删除 " + inventoryIds.length + " 件库存。", false);
+        } catch (error) {
+          setAdminMessage(error.message || "批量删除库存失败，请重试。", true);
+        }
+      }
+
+      adminProductList.addEventListener("click", async function (event) {
+        var button = event.target.closest("button[data-action]");
+        if (!button) return;
+        var card = button.closest(".admin-product-card");
+        var product = state.products.find(function (item) { return item.id === card.dataset.id; });
+        if (!product) return;
+        if (button.dataset.action === "open-inventory-modal") {
+          openInventoryModal(product);
+          return;
+        }
+        if (button.dataset.action === "open-code-modal") {
+          openCodeModal(product);
+          return;
+        }
+        if (button.dataset.action === "copy-codes") {
+          var groups = getCodeGroups(product);
+          await copyCodes(groups[button.dataset.codeKind], button);
+          return;
+        }
+        if (button.dataset.action === "copy-selected-codes") {
+          var codeSection = button.closest(".code-section");
+          var codeSelect = codeSection.querySelector("select[data-action='select-code']");
+          await copyCodes(getSelectedValues(codeSelect), button);
+          return;
+        }
+        if (button.dataset.action === "delete-selected-codes") {
+          var selectedCodeSelect = card.querySelector("select[data-action='select-code'][data-code-kind='" + button.dataset.codeKind + "']");
+          await deleteSelectedCodes(product, selectedCodeSelect);
+          return;
+        }
+        if (button.dataset.action === "toggle-codes") {
+          var codeSection = card.querySelector(".code-section[data-code-kind='" + button.dataset.codeKind + "']");
+          var expanded = codeSection.classList.toggle("hidden") === false;
+          button.textContent = expanded ? "收起" + (button.dataset.codeKind === "available" ? "可用卡密" : "已用卡密") : "查看" + (button.dataset.codeKind === "available" ? "可用卡密" : "已用卡密");
+          return;
+        }
+        if (button.dataset.action === "copy-code") {
+          await copyCode(button.dataset.code, button);
+          return;
+        }
+        if (button.dataset.action === "archive-used-code") {
+          try {
+            await archiveUsedClaim(product, button.dataset.code);
+          } catch (error) {
+            setAdminMessage(error.message || "归档已使用卡密失败，请重试。", true);
+          }
+          return;
+        }
+        if (button.dataset.action === "archive-used-inventory") {
+          try {
+            var inventoryClaimCode = Object.keys(state.claims).find(function (code) {
+              var claim = state.claims[code];
+              return claim && claim.productId === product.id && claim.inventoryId === button.dataset.inventoryId;
+            });
+            if (inventoryClaimCode) await archiveUsedClaim(product, inventoryClaimCode, button.dataset.inventoryId);
+          } catch (error) {
+            setAdminMessage(error.message || "归档已使用库存失败，请重试。", true);
+          }
+          return;
+        }
+        if (button.dataset.action === "edit") {
+          editProduct(product);
+          return;
+        }
+        if (button.dataset.action === "delete") {
+          if (!(await askAdminConfirm("确定删除这个商品及其卡密吗？"))) return;
+          try {
+            await removeProduct(product.id);
+            Object.keys(state.claims).forEach(function (code) {
+              if (state.claims[code] && state.claims[code].productId === product.id) {
+                delete state.claims[code];
+              }
+            });
+            saveClaims();
+            state.products = (await readProducts()).map(normalizeProduct);
+            renderAdminProducts();
+            if (state.editingId === product.id) resetProductForm();
+            setAdminMessage("商品已删除。", false);
+          } catch (error) {
+            setAdminMessage(error.message || "删除失败，请重试。", true);
+          }
+        }
+      });
+
+      adminProductList.addEventListener("change", function (event) {
+        if (event.target.matches("select[data-action='select-code']")) {
+          updateCodeSelection(event.target);
+          return;
+        }
+      });
+
+      adminProductList.addEventListener("input", function (event) {
+        if (!event.target.matches("input[data-action='search-code']")) return;
+        var section = event.target.closest(".code-section");
+        var select = section.querySelector("select");
+        var query = normalized(event.target.value);
+        Array.from(select.options).forEach(function (option) {
+          if (!option.value) return;
+          option.hidden = Boolean(query && normalized(option.dataset.search).indexOf(query) === -1);
+        });
+        updateCodeSelection(select);
+      });
+
+      document.getElementById("closeCodeModal").addEventListener("click", closeCodeModal);
+
+      codeModal.addEventListener("click", function (event) {
+        if (event.target === codeModal) closeCodeModal();
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key !== "Escape") return;
+        if (!codeModal.classList.contains("hidden")) closeCodeModal();
+        if (!inventoryModal.classList.contains("hidden")) closeInventoryModal();
+        if (!archiveModal.classList.contains("hidden")) closeArchiveModal();
+      });
+
+      codeModalSearch.addEventListener("input", filterCodeModalOptions);
+      codeModalSelect.addEventListener("change", updateCodeModalSelection);
+
+      document.getElementById("closeInventoryModal").addEventListener("click", closeInventoryModal);
+
+      inventoryModal.addEventListener("click", function (event) {
+        if (event.target === inventoryModal) closeInventoryModal();
+      });
+
+      inventoryModalSearch.addEventListener("input", filterInventoryModalOptions);
+      inventoryModalSelect.addEventListener("change", updateInventoryModalSelection);
+
+      modalCopyAllCodes.addEventListener("click", async function () {
+        var product = currentCodeModalProduct();
+        if (!product) return;
+        await copyCodes(getCodeGroups(product).available, modalCopyAllCodes);
+      });
+
+      modalCopySelectedCodes.addEventListener("click", async function () {
+        await copyCodes(getSelectedValues(codeModalSelect), modalCopySelectedCodes);
+      });
+
+      modalDeleteSelectedCodes.addEventListener("click", async function () {
+        var product = currentCodeModalProduct();
+        if (!product) return;
+        await deleteSelectedCodes(product, codeModalSelect);
+      });
+
+      modalCopyAllInventory.addEventListener("click", async function () {
+        var product = currentInventoryModalProduct();
+        if (!product) return;
+        var names = getInventoryGroups(product).available.map(function (entry) { return entry.item.name || "库存文件"; });
+        await copyInventoryNames(names, modalCopyAllInventory);
+      });
+
+      modalCopySelectedInventory.addEventListener("click", async function () {
+        var product = currentInventoryModalProduct();
+        if (!product) return;
+        var selectedIds = getSelectedValues(inventoryModalSelect);
+        var names = getInventoryGroups(product).available.filter(function (entry) {
+          return selectedIds.indexOf(entry.item.id) !== -1;
+        }).map(function (entry) { return entry.item.name || "库存文件"; });
+        await copyInventoryNames(names, modalCopySelectedInventory);
+      });
+
+      modalDownloadSelectedInventory.addEventListener("click", function () {
+        var product = currentInventoryModalProduct();
+        var selectedIds = getSelectedValues(inventoryModalSelect);
+        if (!product || selectedIds.length !== 1) return;
+        var entry = getInventoryGroups(product).available.find(function (item) {
+          return item.item.id === selectedIds[0];
+        });
+        if (entry) downloadInventoryItem(entry.item, modalDownloadSelectedInventory);
+      });
+
+      modalDownloadSelectedInventoryZip.addEventListener("click", async function () {
+        var product = currentInventoryModalProduct();
+        if (!product) return;
+        var selectedIds = getSelectedValues(inventoryModalSelect);
+        var entries = getInventoryGroups(product).available.filter(function (entry) {
+          return selectedIds.indexOf(entry.item.id) !== -1;
+        }).map(function (entry, index) {
+          return { file: entry.item, label: "inventory-" + (index + 1) };
+        });
+        await downloadSelectedZip(entries, modalDownloadSelectedInventoryZip, "批量可用库存.zip");
+      });
+
+      modalDeleteSelectedInventory.addEventListener("click", async function () {
+        var product = currentInventoryModalProduct();
+        if (!product) return;
+        await deleteSelectedInventory(product, inventoryModalSelect);
+      });
+
+      openArchiveModalButton.addEventListener("click", openArchiveModal);
+
+      document.getElementById("closeArchiveModal").addEventListener("click", closeArchiveModal);
+
+      archiveModal.addEventListener("click", function (event) {
+        if (event.target === archiveModal) closeArchiveModal();
+      });
+
+      archiveModalSearch.addEventListener("input", renderArchiveModal);
+      archiveModalSelect.addEventListener("change", updateArchiveModalSelection);
+
+      modalCopyAllArchives.addEventListener("click", async function () {
+        await copyCodes(getFilteredArchives().map(function (archive) { return archive.code; }), modalCopyAllArchives);
+      });
+
+      modalCopySelectedArchives.addEventListener("click", async function () {
+        var selectedIds = getSelectedValues(archiveModalSelect);
+        var codes = state.archives.filter(function (archive) {
+          return selectedIds.indexOf(archive.id) !== -1;
+        }).map(function (archive) { return archive.code; });
+        await copyCodes(codes, modalCopySelectedArchives);
+      });
+
+      modalDownloadSelectedArchive.addEventListener("click", function () {
+        var selectedIds = getSelectedValues(archiveModalSelect);
+        if (selectedIds.length !== 1) return;
+        var archive = state.archives.find(function (item) { return item.id === selectedIds[0]; });
+        if (archive && archive.inventory) downloadInventoryItem(archive.inventory, modalDownloadSelectedArchive, "下载已选文件");
+      });
+
+      modalDownloadSelectedArchivesZip.addEventListener("click", async function () {
+        var selectedIds = getSelectedValues(archiveModalSelect);
+        var entries = state.archives.filter(function (archive) {
+          return selectedIds.indexOf(archive.id) !== -1 && archive.inventory;
+        }).map(function (archive) {
+          return { file: archive.inventory, label: archive.code || "archive" };
+        });
+        await downloadSelectedZip(entries, modalDownloadSelectedArchivesZip, "批量已使用文件.zip");
+      });
+
+      modalDeleteSelectedArchives.addEventListener("click", async function () {
+        var selectedIds = getSelectedValues(archiveModalSelect);
+        if (!selectedIds.length) return;
+        var selectedArchives = state.archives.filter(function (archive) {
+          return selectedIds.indexOf(archive.id) !== -1;
+        });
+        if (!(await askAdminConfirm("删除选中的 " + selectedArchives.length + " 条已使用记录后，用户将无法再找回对应文件，确定继续吗？"))) return;
+        try {
+          await deleteArchives(selectedIds);
+          selectedArchives.forEach(function (archive) { delete state.claims[archive.code]; });
+          saveClaims();
+          state.archives = await readArchives();
+          renderArchives();
+          setAdminMessage("已批量删除 " + selectedArchives.length + " 条已使用记录。", false);
+        } catch (error) {
+          setAdminMessage(error.message || "批量删除已使用记录失败，请重试。", true);
+        }
+      });
+
+      window.addEventListener("storage", function (event) {
+        if (event.key === "pickup-claims") {
+          state.claims = loadClaims();
+          renderAdminProducts();
+        }
+      });
+
+      loadProducts();
+    }());
+  </script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>配置中心登录</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #65727c;
+      --line: #dbe3e6;
+      --paper: #f4f7f5;
+      --panel: #ffffff;
+      --teal: #087f78;
+      --teal-dark: #05635e;
+      --teal-soft: #e2f2ef;
+      --coral: #e86f51;
+      --coral-soft: #fff0eb;
+      --shadow: 0 22px 60px rgba(29, 51, 56, 0.11);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(8, 127, 120, 0.06) 0 1px, transparent 1px 28px),
+        var(--paper);
+      background-size: 28px 28px;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+
+    .shell {
+      display: grid;
+      min-height: 100vh;
+      place-items: center;
+      padding: 32px 18px;
+    }
+
+    .login-panel {
+      width: min(420px, 100%);
+      padding: 34px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 800;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 10px;
+      font-size: 20px;
+      box-shadow: 5px 5px 0 var(--coral);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      letter-spacing: 0;
+    }
+
+    .summary {
+      margin: 0 0 26px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    form { display: grid; gap: 16px; }
+    label {
+      display: grid;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      min-height: 46px;
+      padding: 11px 13px;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(8, 127, 120, 0.12);
+    }
+
+    .primary-button {
+      min-height: 48px;
+      margin-top: 6px;
+      color: #fff;
+      background: var(--teal);
+      border: 0;
+      border-radius: 6px;
+      font-weight: 800;
+    }
+
+    .primary-button:disabled {
+      cursor: wait;
+      opacity: 0.72;
+    }
+
+    .message {
+      min-height: 18px;
+      margin: 0;
+      color: #b34f38;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .home-link {
+      display: inline-flex;
+      margin-top: 18px;
+      color: var(--teal-dark);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="login-panel" aria-labelledby="loginTitle">
+      <a class="brand" href="./index.html">
+        <span class="brand-mark" aria-hidden="true">取</span>
+        <span>取件站</span>
+      </a>
+      <h1 id="loginTitle">配置中心登录</h1>
+      <p class="summary">登录后可以管理商品、卡密、库存文件和领取记录。</p>
+      <form id="loginForm">
+        <label>
+          用户名
+          <input id="userInput" name="user" type="text" autocomplete="username" value="admin" required>
+        </label>
+        <label>
+          密码
+          <input id="passwordInput" name="password" type="password" autocomplete="current-password" required autofocus>
+        </label>
+        <button class="primary-button" id="loginButton" type="submit">登录配置中心</button>
+        <p class="message" id="message" role="status" aria-live="polite"></p>
+      </form>
+      <a class="home-link" href="./index.html">返回取件网站</a>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+      var form = document.getElementById("loginForm");
+      var button = document.getElementById("loginButton");
+      var message = document.getElementById("message");
+
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        message.textContent = "";
+        button.disabled = true;
+        button.textContent = "正在登录...";
+        try {
+          var response = await fetch("/api/admin/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              user: document.getElementById("userInput").value.trim(),
+              password: document.getElementById("passwordInput").value
+            })
+          });
+          var data = {};
+          try { data = await response.json(); } catch (error) {}
+          if (!response.ok) throw new Error(data.message || "登录失败，请检查用户名和密码");
+          window.location.href = "/sbdgj";
+        } catch (error) {
+          message.textContent = error.message || "登录失败，请稍后重试";
+          button.disabled = false;
+          button.textContent = "登录配置中心";
+        }
+      });
+    }());
+  </script>
+</body>
+</html>

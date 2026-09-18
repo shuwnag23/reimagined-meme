@@ -1,0 +1,1566 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="数字商品文件领取中心">
+  <title>取件站 | 数字商品领取</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #65727c;
+      --line: #dbe3e6;
+      --paper: #f4f7f5;
+      --panel: #ffffff;
+      --teal: #087f78;
+      --teal-dark: #05635e;
+      --teal-soft: #e2f2ef;
+      --coral: #e86f51;
+      --coral-soft: #fff0eb;
+      --shadow: 0 22px 60px rgba(29, 51, 56, 0.11);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-width: 320px;
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(8, 127, 120, 0.06) 0 1px, transparent 1px 28px),
+        var(--paper);
+      background-size: 28px 28px;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+
+    .site-shell {
+      width: min(1440px, calc(100% - 48px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 78px;
+      border-bottom: 1px solid rgba(117, 143, 145, 0.28);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 10px;
+      font-size: 20px;
+      box-shadow: 5px 5px 0 var(--coral);
+    }
+
+    .brand-name { font-size: 17px; }
+
+    .mode-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      color: var(--teal-dark);
+      background: var(--teal-soft);
+      border: 1px solid rgba(8, 127, 120, 0.14);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .mode-badge::before {
+      width: 7px;
+      height: 7px;
+      content: "";
+      background: #28a66d;
+      border-radius: 50%;
+    }
+
+    .view-tabs {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid rgba(117, 143, 145, 0.22);
+      border-radius: 10px;
+    }
+
+    .view-tab {
+      padding: 8px 12px;
+      color: var(--muted);
+      background: transparent;
+      border: 0;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .view-tab.active {
+      color: var(--teal-dark);
+      background: var(--teal-soft);
+    }
+
+    .hidden { display: none !important; }
+
+    .view-section { width: 100%; }
+
+    .claim-mode-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 20px;
+      padding: 4px;
+      background: #f1f5f4;
+      border-radius: 9px;
+    }
+
+    .claim-mode-tab {
+      flex: 1;
+      min-height: 38px;
+      color: var(--muted);
+      background: transparent;
+      border: 0;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .claim-mode-tab.active {
+      color: var(--teal-dark);
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(29, 51, 56, 0.08);
+    }
+
+    .claim-stats {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 18px 2px 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .claim-stats strong { color: var(--teal-dark); }
+
+    .lookup-pane { padding-bottom: 2px; }
+
+    .lookup-title {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .lookup-copy {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .risk-notice {
+      margin-top: 23px;
+      padding: 14px 15px;
+      color: #875443;
+      background: var(--coral-soft);
+      border: 1px solid rgba(232, 111, 81, 0.14);
+      border-radius: 9px;
+      font-size: 11px;
+      line-height: 1.75;
+    }
+
+    .risk-notice strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #a64c36;
+      font-size: 12px;
+    }
+
+    .risk-notice ul {
+      margin: 0;
+      padding-left: 17px;
+    }
+
+    .config-intro {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .config-intro h1 {
+      font-size: clamp(34px, 5vw, 52px);
+    }
+
+    .config-intro p {
+      max-width: 520px;
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .config-note {
+      max-width: 250px;
+      padding: 13px 15px;
+      color: var(--teal-dark);
+      background: var(--teal-soft);
+      border-left: 3px solid var(--teal);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .admin-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.85fr) minmax(360px, 1.15fr);
+      gap: 18px;
+    }
+
+    .admin-panel {
+      padding: 24px;
+      background: var(--panel);
+      border: 1px solid rgba(104, 128, 132, 0.18);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .admin-panel h2 {
+      margin: 0 0 5px;
+      font-size: 20px;
+    }
+
+    .panel-caption {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .field { margin-bottom: 14px; }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .field input {
+      width: 100%;
+      height: 44px;
+      padding: 0 12px;
+      color: var(--ink);
+      background: #fbfcfc;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      outline: none;
+    }
+
+    .field input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(8, 127, 120, 0.1);
+    }
+
+    .field input[type="file"] {
+      height: auto;
+      padding: 9px;
+      font-size: 12px;
+    }
+
+    .field-help {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .admin-file-preview {
+      display: grid;
+      gap: 6px;
+      margin-top: 9px;
+    }
+
+    .admin-file-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      color: var(--teal-dark);
+      background: var(--teal-soft);
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 9px;
+      margin-top: 20px;
+    }
+
+    .secondary-button, .danger-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 13px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .secondary-button {
+      color: var(--teal-dark);
+      background: var(--teal-soft);
+      border: 1px solid rgba(8, 127, 120, 0.18);
+    }
+
+    .danger-button {
+      color: #b34f38;
+      background: var(--coral-soft);
+      border: 1px solid rgba(232, 111, 81, 0.2);
+    }
+
+    .admin-message {
+      min-height: 18px;
+      margin-top: 12px;
+      color: var(--teal-dark);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .admin-message.error { color: #b34f38; }
+
+    .product-list-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .product-count {
+      min-width: 25px;
+      padding: 4px 7px;
+      color: var(--teal-dark);
+      background: var(--teal-soft);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .admin-product-list { display: grid; gap: 10px; }
+
+    .admin-product-card {
+      padding: 15px;
+      background: #f8faf9;
+      border: 1px solid #e4ebea;
+      border-radius: 9px;
+    }
+
+    .admin-product-card header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .admin-product-card h3 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .product-code {
+      display: inline-block;
+      margin-top: 5px;
+      padding: 4px 7px;
+      color: #a64c36;
+      background: var(--coral-soft);
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+    }
+
+    .admin-product-meta {
+      margin: 12px 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .card-actions { display: flex; gap: 8px; }
+
+    .card-action {
+      padding: 7px 10px;
+      color: var(--teal-dark);
+      background: #fff;
+      border: 1px solid rgba(8, 127, 120, 0.2);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .card-action.delete {
+      color: #b34f38;
+      border-color: rgba(232, 111, 81, 0.2);
+    }
+
+    .empty-state {
+      padding: 30px 18px;
+      color: var(--muted);
+      border: 1px dashed #cbd8d8;
+      border-radius: 9px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    main { padding: 76px 0 100px; }
+
+    .intro {
+      max-width: 720px;
+      margin: 0 auto 34px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 14px;
+      color: var(--coral);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 6vw, 62px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .intro p {
+      max-width: 560px;
+      margin: 18px auto 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .pickup-panel {
+      width: min(1280px, 100%);
+      margin: 0 auto;
+      padding: 26px;
+      background: var(--panel);
+      border: 1px solid rgba(104, 128, 132, 0.18);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .input-label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .code-input {
+      min-width: 0;
+      width: 100%;
+      flex: 1 1 auto;
+      height: 192px;
+      padding: 0 16px;
+      padding-top: 14px;
+      color: var(--ink);
+      background: #fbfcfc;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      outline: none;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      line-height: 1.5;
+      resize: vertical;
+      text-transform: uppercase;
+      transition: border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .code-input::placeholder {
+      color: #9aa7ac;
+      font-size: 14px;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    input.code-input { height: 54px; padding-top: 0; resize: none; }
+
+    .code-input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(8, 127, 120, 0.12);
+    }
+
+    .primary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 128px;
+      height: 54px;
+      padding: 0 18px;
+      color: #fff;
+      background: var(--teal);
+      border: 0;
+      border-radius: 9px;
+      font-weight: 800;
+      transition: background 160ms ease, transform 160ms ease;
+    }
+
+    .primary-button:hover { background: var(--teal-dark); transform: translateY(-1px); }
+    .primary-button:active { transform: translateY(0); }
+
+    .notice {
+      display: flex;
+      gap: 9px;
+      margin: 18px 2px 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .notice::before {
+      flex: 0 0 18px;
+      width: 18px;
+      height: 18px;
+      content: "i";
+      color: var(--teal);
+      border: 1px solid rgba(8, 127, 120, 0.35);
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 17px;
+      text-align: center;
+    }
+
+    .message {
+      min-height: 22px;
+      margin: 14px 2px 0;
+      color: #b34f38;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .message.success { color: var(--teal-dark); }
+
+    .results {
+      display: none;
+      margin-top: 28px;
+      padding-top: 25px;
+      border-top: 1px solid var(--line);
+    }
+
+    .results.visible { display: block; }
+
+    .result-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .result-kicker {
+      margin: 0 0 7px;
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .result-title {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.25;
+    }
+
+    .result-category {
+      flex: 0 0 auto;
+      padding: 7px 10px;
+      color: #a64c36;
+      background: var(--coral-soft);
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .result-subtitle {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .batch-actions {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 14px;
+    }
+
+    .batch-actions.visible { display: flex; }
+
+    .batch-download-status {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .file-list { display: grid; gap: 10px; }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 13px 14px;
+      background: #f8faf9;
+      border: 1px solid #e4ebea;
+      border-radius: 9px;
+    }
+
+    .file-info {
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .file-type {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      flex: 0 0 36px;
+      place-items: center;
+      color: var(--teal-dark);
+      background: var(--teal-soft);
+      border-radius: 7px;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .file-name {
+      overflow: hidden;
+      margin: 0;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .file-size {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .download-link {
+      display: inline-flex;
+      flex: 0 0 auto;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 11px;
+      color: var(--teal-dark);
+      background: #fff;
+      border: 1px solid rgba(8, 127, 120, 0.25);
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .download-link:hover { background: var(--teal-soft); }
+
+    .secondary-button:disabled,
+    .primary-button:disabled {
+      cursor: wait;
+      opacity: 0.65;
+      transform: none;
+    }
+
+    .footer {
+      margin-top: 46px;
+      color: #859196;
+      font-size: 12px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .footer strong { color: #52636a; }
+
+    @media (max-width: 620px) {
+      .site-shell { width: min(100% - 28px, 1080px); }
+      .topbar { min-height: 68px; }
+      .brand-mark { width: 34px; height: 34px; font-size: 17px; }
+      .brand-name { font-size: 15px; }
+      .mode-badge { padding: 7px 9px; font-size: 11px; }
+      main { padding: 55px 0 70px; }
+      h1 { font-size: 38px; }
+      .intro p { font-size: 14px; }
+      .pickup-panel { padding: 19px; }
+      .input-row { flex-direction: column; }
+      .code-input { width: 100%; flex-basis: auto; }
+      .primary-button { width: 100%; }
+      .result-heading { display: block; }
+      .result-category { display: inline-block; margin-top: 12px; }
+      .batch-actions { align-items: stretch; flex-direction: column; }
+      .batch-actions .secondary-button { width: 100%; }
+      .file-item { align-items: flex-start; flex-direction: column; }
+      .download-link { width: 100%; justify-content: center; }
+      .claim-stats { align-items: flex-start; flex-direction: column; gap: 5px; }
+      .view-tabs { gap: 0; }
+      .view-tab { padding: 7px 8px; font-size: 11px; }
+      .config-intro { display: block; }
+      .config-note { max-width: none; margin-top: 18px; }
+      .admin-layout { grid-template-columns: 1fr; }
+      .admin-panel { padding: 19px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="返回取件站首页">
+        <span class="brand-mark" aria-hidden="true">+</span>
+        <span class="brand-name" id="brandName">取件站</span>
+      </a>
+      <span class="mode-badge">在线取件</span>
+    </header>
+
+    <main>
+      <section class="view-section" id="pickupView">
+        <section class="intro" aria-labelledby="pageTitle">
+          <span class="eyebrow">Digital delivery</span>
+          <h1 id="pageTitle">输入卡密<br>领取商品文件</h1>
+          <p id="tagline">数字商品文件领取中心</p>
+        </section>
+
+        <section class="pickup-panel" aria-label="卡密取件">
+          <div class="claim-mode-tabs" role="tablist" aria-label="取件方式">
+            <button class="claim-mode-tab active" type="button" role="tab" aria-selected="true" data-claim-mode="redeem">兑换</button>
+            <button class="claim-mode-tab" type="button" role="tab" aria-selected="false" data-claim-mode="lookup">查找</button>
+          </div>
+
+          <div class="claim-stats">
+            <span>商品种类 <strong id="productStock">0</strong> 个</span>
+            <span>剩余库存 <strong id="inventoryStock">0</strong> 件</span>
+          </div>
+
+          <form id="pickupForm" novalidate>
+            <label class="input-label" for="codeInput">兑换码</label>
+            <div class="input-row">
+              <textarea class="code-input" id="codeInput" name="code" rows="3" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="请输入兑换码，批量取件时每行输入一个" aria-describedby="notice message"></textarea>
+              <button class="primary-button" id="redeemSubmitButton" type="submit"><span aria-hidden="true">→</span> 立即兑换</button>
+            </div>
+            <p class="notice" id="notice">每个兑换码只能兑换一次，请妥善保管你的兑换码。</p>
+            <p class="message" id="message" role="status" aria-live="polite"></p>
+          </form>
+
+          <form class="lookup-pane hidden" id="lookupForm" novalidate>
+            <h2 class="lookup-title">找回已兑换商品</h2>
+            <p class="lookup-copy">输入已经兑换过的兑换码，即可重新查看对应商品文件。</p>
+            <label class="input-label" for="lookupInput">兑换码</label>
+            <div class="input-row">
+              <textarea class="code-input" id="lookupInput" name="lookupCode" rows="3" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="请输入已兑换的兑换码，批量查找时每行输入一个" aria-describedby="lookupMessage"></textarea>
+              <button class="primary-button" id="lookupSubmitButton" type="submit"><span aria-hidden="true">⌕</span> 查询商品</button>
+            </div>
+            <p class="message" id="lookupMessage" role="status" aria-live="polite"></p>
+          </form>
+
+          <div class="risk-notice">
+            <strong>使用提醒</strong>
+            <ul>
+              <li>兑换码兑换成功后只能使用一次。</li>
+              <li>本页面的兑换记录保存在当前浏览器中，请勿清除网站数据。</li>
+              <li>请确认商品和文件后再进行兑换，兑换后不支持撤回。</li>
+            </ul>
+          </div>
+
+          <section class="results" id="results" aria-live="polite">
+            <div class="result-heading">
+              <div>
+              <p class="result-kicker">分配成功</p>
+                <h2 class="result-title" id="resultTitle"></h2>
+                <p class="result-subtitle" id="resultSubtitle"></p>
+              </div>
+              <span class="result-category" id="resultCategory"></span>
+            </div>
+            <div class="batch-actions" id="batchActions">
+              <button class="secondary-button" id="batchDownloadButton" type="button"><span aria-hidden="true">↓</span> 批量下载 ZIP</button>
+              <span class="batch-download-status" id="batchDownloadStatus" role="status" aria-live="polite"></span>
+            </div>
+            <div class="file-list" id="fileList"></div>
+          </section>
+        </section>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="./config.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      var config = window.PICKUP_CONFIG || {};
+      var dbName = "pickup-station-db";
+      var dbVersion = 2;
+      var db = null;
+      var serverMode = window.location.protocol !== "file:";
+      var state = { products: [], archives: [], editingId: null, claims: {}, publicStats: null };
+      var form = document.getElementById("pickupForm");
+      var input = document.getElementById("codeInput");
+      var message = document.getElementById("message");
+      var lookupForm = document.getElementById("lookupForm");
+      var lookupInput = document.getElementById("lookupInput");
+      var lookupSubmitButton = document.getElementById("lookupSubmitButton");
+      var lookupMessage = document.getElementById("lookupMessage");
+      var results = document.getElementById("results");
+      var fileList = document.getElementById("fileList");
+      var redeemSubmitButton = document.getElementById("redeemSubmitButton");
+      var batchActions = document.getElementById("batchActions");
+      var batchDownloadButton = document.getElementById("batchDownloadButton");
+      var batchDownloadStatus = document.getElementById("batchDownloadStatus");
+      var activeObjectUrls = [];
+      var batchAssignments = [];
+      var batchMode = "redeem";
+      var crc32Table = null;
+
+      async function apiRequest(url, options) {
+        var response = await fetch(url, options || {});
+        var data = {};
+        try { data = await response.json(); } catch (error) {}
+        if (!response.ok) throw new Error(data.message || "服务器请求失败（" + response.status + "）");
+        return data;
+      }
+
+      document.title = (config.siteName || "取件站") + " | 数字商品领取";
+      document.getElementById("brandName").textContent = config.siteName || "取件站";
+      document.getElementById("tagline").textContent = config.siteTagline || "数字商品文件领取中心";
+      document.getElementById("notice").textContent = config.notice || "请输入卡密领取对应商品文件。";
+
+      function uid() {
+        return "product-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
+      }
+
+      function normalized(value) {
+        return String(value || "").trim().replace(/\s+/g, "").toUpperCase();
+      }
+
+      function parseRedeemCodes(value) {
+        var seen = {};
+        return String(value || "").split(/[\r\n,，;；]+/).map(normalized).filter(function (code) {
+          if (!code || seen[code]) return false;
+          seen[code] = true;
+          return true;
+        });
+      }
+
+      function setMessage(text, success) {
+        message.textContent = text;
+        message.className = success ? "message success" : "message";
+      }
+
+      function setLookupMessage(text, success) {
+        lookupMessage.textContent = text;
+        lookupMessage.className = success ? "message success" : "message";
+      }
+
+      function loadClaims() {
+        try {
+          return JSON.parse(window.localStorage.getItem("pickup-claims") || "{}");
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function saveClaims() {
+        if (serverMode) return;
+        try {
+          window.localStorage.setItem("pickup-claims", JSON.stringify(state.claims));
+        } catch (error) {
+          setMessage("当前浏览器无法保存兑换记录，刷新页面后可能无法查找已兑换商品。", false);
+        }
+      }
+
+      function remainingInventoryCount(product) {
+        return product.inventory.filter(function (item) {
+          return !Object.keys(state.claims).some(function (code) {
+            var claim = state.claims[code];
+            return claim && claim.productId === product.id && claim.inventoryId === item.id;
+          });
+        }).length;
+      }
+
+      function renderStats() {
+        if (serverMode && state.publicStats) {
+          document.getElementById("productStock").textContent = state.publicStats.products.length;
+          document.getElementById("inventoryStock").textContent = state.publicStats.products.reduce(function (total, product) {
+            return total + Number(product.inventoryCount || 0);
+          }, 0);
+          return;
+        }
+        var remainingInventory = 0;
+        state.products.forEach(function (product) {
+          remainingInventory += remainingInventoryCount(product);
+        });
+        document.getElementById("productStock").textContent = state.products.length;
+        document.getElementById("inventoryStock").textContent = Math.max(remainingInventory, 0);
+      }
+
+      function normalizeProduct(product) {
+        var legacyFiles = Array.isArray(product.files) ? product.files : [];
+        var inventory = Array.isArray(product.inventory) ? product.inventory : legacyFiles;
+        var codes = Array.isArray(product.codes) ? product.codes : (product.code ? [product.code] : []);
+        return {
+          id: product.id || uid(),
+          codes: codes.map(normalized).filter(Boolean),
+          title: product.title || "未命名商品",
+          subtitle: product.subtitle || "",
+          category: product.category || "商品文件",
+          inventory: inventory.map(function (file) {
+            return {
+              id: file.id || uid(),
+              name: file.name || "商品文件",
+              path: file.path || "",
+              type: file.type || "FILE",
+              size: file.size || "",
+              blob: file.blob
+            };
+          })
+        };
+      }
+
+      function seedProducts() {
+        return (Array.isArray(config.products) ? config.products : []).map(normalizeProduct);
+      }
+
+      function openDatabase() {
+        if (!window.indexedDB) return Promise.reject(new Error("当前浏览器不支持本地存储"));
+        return new Promise(function (resolve, reject) {
+          var request = window.indexedDB.open(dbName, dbVersion);
+          request.onupgradeneeded = function (event) {
+            var database = event.target.result;
+            if (!database.objectStoreNames.contains("products")) {
+              database.createObjectStore("products", { keyPath: "id" });
+            }
+            if (!database.objectStoreNames.contains("archives")) {
+              database.createObjectStore("archives", { keyPath: "id" });
+            }
+          };
+          request.onsuccess = function () { resolve(request.result); };
+          request.onerror = function () { reject(request.error || new Error("本地存储初始化失败")); };
+        });
+      }
+
+      function readProducts() {
+        return new Promise(function (resolve, reject) {
+          var request = db.transaction("products", "readonly").objectStore("products").getAll();
+          request.onsuccess = function () { resolve(request.result || []); };
+          request.onerror = function () { reject(request.error || new Error("读取商品配置失败")); };
+        });
+      }
+
+      function readArchives() {
+        return new Promise(function (resolve, reject) {
+          var request = db.transaction("archives", "readonly").objectStore("archives").getAll();
+          request.onsuccess = function () { resolve(request.result || []); };
+          request.onerror = function () { reject(request.error || new Error("读取归档记录失败")); };
+        });
+      }
+
+      function writeArchive(archive) {
+        return new Promise(function (resolve, reject) {
+          var transaction = db.transaction("archives", "readwrite");
+          transaction.objectStore("archives").put(archive);
+          transaction.oncomplete = resolve;
+          transaction.onerror = function () { reject(transaction.error || new Error("保存已使用记录失败")); };
+        });
+      }
+
+      function writeProduct(product) {
+        return new Promise(function (resolve, reject) {
+          var transaction = db.transaction("products", "readwrite");
+          transaction.objectStore("products").put(product);
+          transaction.oncomplete = resolve;
+          transaction.onerror = function () { reject(transaction.error || new Error("保存商品配置失败")); };
+        });
+      }
+
+      function removeProduct(id) {
+        return new Promise(function (resolve, reject) {
+          var transaction = db.transaction("products", "readwrite");
+          transaction.objectStore("products").delete(id);
+          transaction.oncomplete = resolve;
+          transaction.onerror = function () { reject(transaction.error || new Error("删除商品配置失败")); };
+        });
+      }
+
+      async function loadProducts() {
+        if (serverMode) {
+          try {
+            state.publicStats = await apiRequest("/api/public/state");
+            state.products = (state.publicStats.products || []).map(function (product) {
+              return normalizeProduct({ id: product.id, title: product.title, subtitle: product.subtitle, category: product.category, codes: [], inventory: [] });
+            });
+            renderStats();
+          } catch (error) {
+            setMessage(error.message || "无法连接服务端，请检查服务器状态。", false);
+          }
+          return;
+        }
+        state.claims = loadClaims();
+        try {
+          db = await openDatabase();
+          state.products = (await readProducts()).map(normalizeProduct);
+          state.archives = await readArchives();
+          if (!state.products.length) {
+            state.products = seedProducts();
+            for (var i = 0; i < state.products.length; i += 1) await writeProduct(state.products[i]);
+          }
+        } catch (error) {
+          state.products = seedProducts();
+          setMessage("浏览器本地存储不可用，当前配置只会在本次打开期间有效。", false);
+        }
+        renderStats();
+      }
+
+      function resetBatchDownload() {
+        batchAssignments = [];
+        batchMode = "redeem";
+        batchActions.classList.remove("visible");
+        batchDownloadButton.disabled = false;
+        batchDownloadButton.innerHTML = '<span aria-hidden="true">↓</span> 批量下载 ZIP';
+        batchDownloadStatus.textContent = "";
+      }
+
+      function getCrc32Table() {
+        if (crc32Table) return crc32Table;
+        crc32Table = [];
+        for (var i = 0; i < 256; i += 1) {
+          var value = i;
+          for (var bit = 0; bit < 8; bit += 1) {
+            value = value & 1 ? 0xedb88320 ^ (value >>> 1) : value >>> 1;
+          }
+          crc32Table[i] = value >>> 0;
+        }
+        return crc32Table;
+      }
+
+      function crc32(bytes) {
+        var table = getCrc32Table();
+        var value = 0xffffffff;
+        for (var i = 0; i < bytes.length; i += 1) {
+          value = table[(value ^ bytes[i]) & 0xff] ^ (value >>> 8);
+        }
+        return (value ^ 0xffffffff) >>> 0;
+      }
+
+      function safeZipName(value, fallback) {
+        var name = String(value || "").replace(/[\\/:*?"<>|]+/g, "_").trim();
+        return name || fallback;
+      }
+
+      async function readInventoryBytes(file) {
+        if (file.blob && typeof file.blob.arrayBuffer === "function") {
+          return new Uint8Array(await file.blob.arrayBuffer());
+        }
+        if (!file.path) throw new Error("文件没有可读取内容。");
+        if (window.location.protocol === "file:") {
+          throw new Error("直接打开本地网页时无法读取路径文件，请先在配置中心重新上传该文件。");
+        }
+        var response = await fetch(file.path);
+        if (!response.ok) throw new Error("读取文件失败：" + (file.name || "商品文件"));
+        return new Uint8Array(await response.arrayBuffer());
+      }
+
+      async function createZipBlob(assignments) {
+        var encoder = new TextEncoder();
+        var entries = [];
+        var localSize = 0;
+
+        for (var i = 0; i < assignments.length; i += 1) {
+          var assignment = assignments[i];
+          var file = assignment.inventoryItem;
+          var data = await readInventoryBytes(file);
+          var filename = safeZipName(assignment.code, "card-" + (i + 1)) + "-" + safeZipName(file.name, "商品文件");
+          var nameBytes = encoder.encode(filename);
+          if (nameBytes.length > 0xffff || data.length > 0xffffffff) {
+            throw new Error("文件过大，无法生成压缩包。");
+          }
+          var entry = {
+            data: data,
+            nameBytes: nameBytes,
+            crc: crc32(data),
+            localOffset: localSize
+          };
+          entries.push(entry);
+          localSize += 30 + nameBytes.length + data.length;
+        }
+
+        var centralSize = entries.reduce(function (total, entry) {
+          return total + 46 + entry.nameBytes.length;
+        }, 0);
+        var endSize = 22;
+        var totalSize = localSize + centralSize + endSize;
+        if (totalSize > 0xffffffff || entries.length > 0xffff) {
+          throw new Error("文件总大小过大，无法生成压缩包。");
+        }
+
+        var output = new Uint8Array(totalSize);
+        var view = new DataView(output.buffer);
+        var offset = 0;
+        entries.forEach(function (entry) {
+          view.setUint32(offset, 0x04034b50, true);
+          view.setUint16(offset + 4, 20, true);
+          view.setUint16(offset + 6, 0x0800, true);
+          view.setUint16(offset + 8, 0, true);
+          view.setUint16(offset + 10, 0, true);
+          view.setUint16(offset + 12, 0, true);
+          view.setUint32(offset + 14, entry.crc, true);
+          view.setUint32(offset + 18, entry.data.length, true);
+          view.setUint32(offset + 22, entry.data.length, true);
+          view.setUint16(offset + 26, entry.nameBytes.length, true);
+          view.setUint16(offset + 28, 0, true);
+          output.set(entry.nameBytes, offset + 30);
+          output.set(entry.data, offset + 30 + entry.nameBytes.length);
+          offset += 30 + entry.nameBytes.length + entry.data.length;
+        });
+
+        var centralOffset = offset;
+        entries.forEach(function (entry) {
+          view.setUint32(offset, 0x02014b50, true);
+          view.setUint16(offset + 4, 20, true);
+          view.setUint16(offset + 6, 20, true);
+          view.setUint16(offset + 8, 0x0800, true);
+          view.setUint16(offset + 10, 0, true);
+          view.setUint16(offset + 12, 0, true);
+          view.setUint16(offset + 14, 0, true);
+          view.setUint32(offset + 16, entry.crc, true);
+          view.setUint32(offset + 20, entry.data.length, true);
+          view.setUint32(offset + 24, entry.data.length, true);
+          view.setUint16(offset + 28, entry.nameBytes.length, true);
+          view.setUint16(offset + 30, 0, true);
+          view.setUint16(offset + 32, 0, true);
+          view.setUint16(offset + 34, 0, true);
+          view.setUint16(offset + 36, 0, true);
+          view.setUint32(offset + 38, 0, true);
+          view.setUint32(offset + 42, entry.localOffset, true);
+          output.set(entry.nameBytes, offset + 46);
+          offset += 46 + entry.nameBytes.length;
+        });
+
+        view.setUint32(offset, 0x06054b50, true);
+        view.setUint16(offset + 4, 0, true);
+        view.setUint16(offset + 6, 0, true);
+        view.setUint16(offset + 8, entries.length, true);
+        view.setUint16(offset + 10, entries.length, true);
+        view.setUint32(offset + 12, centralSize, true);
+        view.setUint32(offset + 16, centralOffset, true);
+        view.setUint16(offset + 20, 0, true);
+        return new Blob([output], { type: "application/zip" });
+      }
+
+      function startDownload(blob, filename) {
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      }
+
+      async function downloadBatchZip(assignments) {
+        if (!assignments.length) return;
+        batchDownloadButton.disabled = true;
+        batchDownloadButton.innerHTML = '<span aria-hidden="true">↓</span> 正在打包';
+        batchDownloadStatus.textContent = "正在准备压缩包...";
+        try {
+          var blob = await createZipBlob(assignments);
+          var filename = batchMode === "lookup" ? "批量查找文件.zip" : "批量取件文件.zip";
+          startDownload(blob, filename);
+          batchDownloadStatus.textContent = "压缩包已开始下载。";
+        } catch (error) {
+          batchDownloadStatus.textContent = "压缩包生成失败：" + (error.message || "无法读取文件");
+        } finally {
+          batchDownloadButton.disabled = false;
+          batchDownloadButton.innerHTML = '<span aria-hidden="true">↓</span> 批量下载 ZIP';
+        }
+      }
+
+      function renderProduct(product, inventoryItem) {
+        resetBatchDownload();
+        document.getElementById("resultTitle").textContent = product.title || "你的商品文件";
+        document.getElementById("resultSubtitle").textContent = product.subtitle || (inventoryItem ? "已按库存顺序为你分配商品，可以开始下载。" : "文件已准备好，可以开始下载。");
+        document.getElementById("resultCategory").textContent = product.category || "商品文件";
+        fileList.innerHTML = "";
+        activeObjectUrls.forEach(function (url) { URL.revokeObjectURL(url); });
+        activeObjectUrls = [];
+
+        (inventoryItem ? [inventoryItem] : product.inventory).forEach(function (file) {
+          var item = document.createElement("article");
+          item.className = "file-item";
+
+          var info = document.createElement("div");
+          info.className = "file-info";
+
+          var type = document.createElement("span");
+          type.className = "file-type";
+          type.textContent = file.type || "FILE";
+
+          var copy = document.createElement("div");
+          var name = document.createElement("p");
+          name.className = "file-name";
+          name.textContent = file.name || "商品文件";
+          var size = document.createElement("p");
+          size.className = "file-size";
+          size.textContent = file.size || "点击下载";
+          copy.appendChild(name);
+          copy.appendChild(size);
+          info.appendChild(type);
+          info.appendChild(copy);
+
+          var link = document.createElement("a");
+          link.className = "download-link";
+          link.href = file.blob ? URL.createObjectURL(file.blob) : (file.path || "#");
+          if (file.blob) activeObjectUrls.push(link.href);
+          link.setAttribute("download", file.name || "download");
+          link.innerHTML = '<span aria-hidden="true">↓</span> 下载文件';
+
+          item.appendChild(info);
+          item.appendChild(link);
+          fileList.appendChild(item);
+        });
+
+        results.classList.add("visible");
+      }
+
+      function renderBatchProducts(assignments, failures, mode) {
+        var lookupMode = mode === "lookup";
+        batchAssignments = assignments.slice();
+        batchMode = lookupMode ? "lookup" : "redeem";
+        batchActions.classList.toggle("visible", assignments.length > 1);
+        batchDownloadButton.disabled = false;
+        batchDownloadButton.innerHTML = '<span aria-hidden="true">↓</span> 批量下载 ZIP';
+        batchDownloadStatus.textContent = assignments.length > 1 ? "可点击按钮下载 ZIP 压缩包。" : "";
+        document.getElementById("resultTitle").textContent = lookupMode ? "批量查找完成" : "批量取件完成";
+        document.getElementById("resultSubtitle").textContent = lookupMode ? "成功 " + assignments.length + " 张，失败 " + failures.length + " 张。" : "成功 " + assignments.length + " 张，失败 " + failures.length + " 张。成功项目已按库存顺序分配。";
+        document.getElementById("resultCategory").textContent = lookupMode ? "批量查找" : "批量取件";
+        fileList.innerHTML = "";
+        activeObjectUrls.forEach(function (url) { URL.revokeObjectURL(url); });
+        activeObjectUrls = [];
+
+        assignments.forEach(function (assignment) {
+          var item = document.createElement("article");
+          item.className = "file-item";
+
+          var info = document.createElement("div");
+          info.className = "file-info";
+          var type = document.createElement("span");
+          type.className = "file-type";
+          type.textContent = assignment.inventoryItem.type || "FILE";
+          var copy = document.createElement("div");
+          var name = document.createElement("p");
+          name.className = "file-name";
+          name.textContent = assignment.inventoryItem.name || "商品文件";
+          var size = document.createElement("p");
+          size.className = "file-size";
+          size.textContent = assignment.code + " · " + (assignment.product.title || "商品") + " · " + (assignment.inventoryItem.size || "点击下载");
+          copy.appendChild(name);
+          copy.appendChild(size);
+          info.appendChild(type);
+          info.appendChild(copy);
+
+          var link = document.createElement("a");
+          link.className = "download-link";
+          link.href = assignment.inventoryItem.blob ? URL.createObjectURL(assignment.inventoryItem.blob) : (assignment.inventoryItem.path || "#");
+          if (assignment.inventoryItem.blob) activeObjectUrls.push(link.href);
+          link.setAttribute("download", assignment.inventoryItem.name || "download");
+          link.innerHTML = '<span aria-hidden="true">↓</span> 下载文件';
+
+          item.appendChild(info);
+          item.appendChild(link);
+          fileList.appendChild(item);
+        });
+
+        if (failures.length) {
+          var failureNote = document.createElement("p");
+          failureNote.className = "result-subtitle";
+          failureNote.textContent = failures.map(function (failure) { return failure.code + "：" + failure.message; }).join("；");
+          fileList.appendChild(failureNote);
+        }
+        results.classList.add("visible");
+      }
+
+      function findProductByCode(code) {
+        return state.products.find(function (product) {
+          return product.codes.indexOf(code) !== -1;
+        });
+      }
+
+      function findAvailableInventory(product) {
+        return product.inventory.find(function (item) {
+          return !Object.keys(state.claims).some(function (code) {
+            var claim = state.claims[code];
+            return claim && claim.productId === product.id && claim.inventoryId === item.id;
+          });
+        });
+      }
+
+      function findClaimProduct(claim) {
+        return state.products.find(function (product) {
+          return product.id === claim.productId;
+        });
+      }
+
+      function findArchive(code) {
+        return state.archives.find(function (archive) {
+          return normalized(archive.code) === code;
+        });
+      }
+
+      function findLookupAssignment(code) {
+        var claim = state.claims[code];
+        var product = claim && findClaimProduct(claim);
+        var inventoryItem = product && claim.inventoryId && product.inventory.find(function (item) {
+          return item.id === claim.inventoryId;
+        });
+        var archive = claim && findArchive(code);
+        if ((!product || !inventoryItem) && archive) {
+          product = {
+            id: archive.productId,
+            title: archive.productTitle || "已归档商品",
+            subtitle: "该商品已归档，文件仍可下载。",
+            category: "已归档库存",
+            inventory: [archive.inventory]
+          };
+          inventoryItem = archive.inventory;
+        }
+        if (!claim || !product || !inventoryItem) {
+          return { success: false, code: code, message: "没有找到已兑换记录，请确认兑换码或当前浏览器数据。" };
+        }
+        return { success: true, code: code, product: product, inventoryItem: inventoryItem };
+      }
+
+      async function claimCode(code) {
+        if (serverMode) {
+          try {
+            var remote = await apiRequest("/api/public/claim", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ codes: [code] }) });
+            if (remote.assignments && remote.assignments.length) {
+              var remoteAssignment = remote.assignments[0];
+              return { success: true, code: code, product: remoteAssignment.product, inventoryItem: remoteAssignment.inventoryItem };
+            }
+            return (remote.failures && remote.failures[0]) || { success: false, code: code, message: "兑换失败，请稍后重试。" };
+          } catch (error) {
+            return { success: false, code: code, message: error.message || "兑换失败，请稍后重试。" };
+          }
+        }
+        if (state.claims[code]) {
+          return { success: false, code: code, message: "该兑换码已经兑换，请切换到查找模式。" };
+        }
+        var product = findProductByCode(code);
+        if (!product) {
+          return { success: false, code: code, message: "兑换码无效，请检查后重试。" };
+        }
+        var inventoryItem = findAvailableInventory(product);
+        if (!inventoryItem) {
+          return { success: false, code: code, message: "当前商品库存已发完。" };
+        }
+
+        var claimedAt = new Date().toISOString();
+        var archive = {
+          id: "archive-" + uid(),
+          productId: product.id,
+          productTitle: product.title,
+          code: code,
+          inventory: inventoryItem,
+          claimedAt: claimedAt,
+          archivedAt: claimedAt
+        };
+        var nextProduct = {
+          id: product.id,
+          title: product.title,
+          codes: product.codes.filter(function (item) { return item !== code; }),
+          category: product.category,
+          subtitle: product.subtitle,
+          inventory: product.inventory.filter(function (item) { return item.id !== inventoryItem.id; })
+        };
+
+        try {
+          if (!db) throw new Error("当前浏览器无法保存兑换记录");
+          await writeArchive(archive);
+          await writeProduct(nextProduct);
+        } catch (error) {
+          return { success: false, code: code, message: error.message || "兑换记录保存失败。" };
+        }
+
+        state.claims[code] = { productId: product.id, inventoryId: inventoryItem.id, claimedAt: claimedAt };
+        state.archives.push(archive);
+        product.codes = nextProduct.codes;
+        product.inventory = nextProduct.inventory;
+        return { success: true, code: code, product: product, inventoryItem: inventoryItem };
+      }
+
+      async function lookupCode(code) {
+        if (!serverMode) return findLookupAssignment(code);
+        try {
+          var remote = await apiRequest("/api/public/lookup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ codes: [code] }) });
+          if (remote.assignments && remote.assignments.length) {
+            var remoteAssignment = remote.assignments[0];
+            return { success: true, code: code, product: remoteAssignment.product, inventoryItem: remoteAssignment.inventoryItem };
+          }
+          return (remote.failures && remote.failures[0]) || { success: false, code: code, message: "没有找到已兑换记录，请确认兑换码。" };
+        } catch (error) {
+          return { success: false, code: code, message: error.message || "查询失败，请稍后重试。" };
+        }
+      }
+
+      batchDownloadButton.addEventListener("click", function () {
+        downloadBatchZip(batchAssignments);
+      });
+
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        var codes = parseRedeemCodes(input.value);
+        results.classList.remove("visible");
+        if (!codes.length) {
+          setMessage("请输入兑换码后再取件。", false);
+          input.focus();
+          return;
+        }
+
+        redeemSubmitButton.disabled = true;
+        var assignments = [];
+        var failures = [];
+        for (var i = 0; i < codes.length; i += 1) {
+          var result = await claimCode(codes[i]);
+          if (result.success) assignments.push(result);
+          else failures.push(result);
+        }
+        redeemSubmitButton.disabled = false;
+        saveClaims();
+        if (serverMode) {
+          try { state.publicStats = await apiRequest("/api/public/state"); } catch (error) {}
+        }
+        renderStats();
+
+        if (codes.length === 1) {
+          if (assignments.length) {
+            setMessage("兑换成功，商品文件已解锁。", true);
+            renderProduct(assignments[0].product, assignments[0].inventoryItem);
+          } else {
+            setMessage(failures[0].message, false);
+            input.focus();
+          }
+          return;
+        }
+
+        setMessage("批量取件已完成。", assignments.length > 0);
+        renderBatchProducts(assignments, failures);
+      });
+
+      input.addEventListener("input", function () {
+        if (message.textContent) setMessage("", true);
+        results.classList.remove("visible");
+        var codeCount = parseRedeemCodes(input.value).length;
+        redeemSubmitButton.innerHTML = codeCount > 1 ? '<span aria-hidden="true">→</span> 批量兑换' : '<span aria-hidden="true">→</span> 立即兑换';
+      });
+
+      lookupForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        results.classList.remove("visible");
+        var codes = parseRedeemCodes(lookupInput.value);
+        if (!codes.length) {
+          setLookupMessage("请输入已兑换的兑换码。", false);
+          lookupInput.focus();
+          return;
+        }
+
+        var assignments = [];
+        var failures = [];
+        for (var i = 0; i < codes.length; i += 1) {
+          var result = await lookupCode(codes[i]);
+          if (result.success) assignments.push(result);
+          else failures.push(result);
+        }
+
+        if (codes.length === 1) {
+          if (assignments.length) {
+            setLookupMessage("已找到商品，可以重新下载文件。", true);
+            renderProduct(assignments[0].product, assignments[0].inventoryItem);
+          } else {
+            setLookupMessage(failures[0].message, false);
+            lookupInput.focus();
+          }
+          return;
+        }
+
+        setLookupMessage("批量查找已完成。", assignments.length > 0);
+        renderBatchProducts(assignments, failures, "lookup");
+      });
+
+      lookupInput.addEventListener("input", function () {
+        setLookupMessage("", true);
+        results.classList.remove("visible");
+        var codeCount = parseRedeemCodes(lookupInput.value).length;
+        lookupSubmitButton.innerHTML = codeCount > 1 ? '<span aria-hidden="true">⌕</span> 批量查找' : '<span aria-hidden="true">⌕</span> 查询商品';
+      });
+
+      document.querySelectorAll("[data-claim-mode]").forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          var mode = tab.dataset.claimMode;
+          var isRedeem = mode === "redeem";
+          document.querySelectorAll("[data-claim-mode]").forEach(function (otherTab) {
+            var active = otherTab === tab;
+            otherTab.classList.toggle("active", active);
+            otherTab.setAttribute("aria-selected", String(active));
+          });
+          form.classList.toggle("hidden", !isRedeem);
+          lookupForm.classList.toggle("hidden", isRedeem);
+          results.classList.remove("visible");
+          setMessage("", true);
+          setLookupMessage("", true);
+        });
+      });
+
+      loadProducts();
+    }());
+  </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+# Environment variables and local overrides
+.env
+.env.*
+!.env.example
+
+# Runtime data (may contain redemption codes and download tokens)
+data/*
+!data/.gitkeep
+uploads/*
+!uploads/.gitkeep
+
+# Local deployment/branding files that are not part of the open-source project
+local/
+
+# Dependencies, logs, coverage, and temporary files
+node_modules/
+coverage/
+*.log
+*.tmp
+*.bak
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
